@@ -992,7 +992,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
 .activity-toolbar h2 { margin:0 auto 0 0; font-size:18px; }
 .activity-toolbar button.act { flex:none; min-width:0; padding:9px 12px; min-height:40px; font:600 12px 'Inter',sans-serif; }
 .activity-status { flex:none; min-height:24px; padding:6px 0; color:var(--cream-dim); font-size:11px; }
-body.activity-mode { height:100dvh; overflow:hidden; }
+body.activity-mode { height:var(--app-height,100dvh); min-height:0; overflow:hidden; }
 body.activity-mode .app { height:100%; padding:10px 12px; display:flex; flex-direction:column; }
 body.activity-mode header { flex:none; margin:0 0 8px; padding:0 0 8px; gap:8px; align-items:center; }
 body.activity-mode .brand h1 { font-size:20px; }
@@ -4898,6 +4898,13 @@ body.activity-mode .app-options-button { display:none; }
   cmResetShoe();
   cmUpdateStats();
   cmDealNext();
+  // Follow the visible viewport as mobile browser bars expand or collapse.
+  function updateAppHeight(){
+    document.documentElement.style.setProperty('--app-height',`${window.visualViewport?.height || window.innerHeight}px`);
+  }
+  updateAppHeight();
+  window.visualViewport?.addEventListener('resize',updateAppHeight);
+  window.addEventListener('resize',updateAppHeight);
   initializeActivityShells();
   initializeTableHandLayout();
   scheduleDeckRunners();

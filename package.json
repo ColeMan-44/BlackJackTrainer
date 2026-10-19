@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "test": "node --test tests/strategy.test.cjs",
-    "test:browser": "node tests/browser.cjs && node tests/seating.cjs && node tests/aids.cjs && node tests/app-layout.cjs && node tests/table-experience.cjs && node tests/results.cjs && node tests/hand-layout.cjs"
+    "test:browser": "node tests/browser.cjs && node tests/seating.cjs && node tests/aids.cjs && node tests/app-layout.cjs && node tests/table-experience.cjs && node tests/results.cjs && node tests/hand-layout.cjs && node tests/mobile-viewport.cjs"
   },
   "devDependencies": {
     "playwright": "1.64.1"
