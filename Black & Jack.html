@@ -980,6 +980,144 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
 .aid-description { margin:0; line-height:1.6; }
 #t-strategy-guide:not([hidden]), #t-count-display:not([hidden]) { margin-top:14px; }
 [hidden] { display:none !important; }
+
+/* App screens: activity stays in the viewport; options and detail live in dialogs. */
+.activity-dialog { width:min(680px,calc(100vw - 24px)); max-height:88dvh; margin:auto; padding:20px; border:1px solid #75958366; border-radius:20px; background:var(--bg); color:var(--cream); overflow:auto; box-shadow:0 24px 90px #000a; }
+.activity-dialog::backdrop { background:#050a08b8; backdrop-filter:blur(5px); }
+.dialog-header { display:flex; justify-content:space-between; align-items:center; gap:16px; position:sticky; top:-20px; z-index:2; background:var(--bg); margin:-20px -20px 20px; padding:16px 20px; border-bottom:1px solid var(--felt-line); }
+.dialog-header h2 { font-size:19px; margin:0; }
+.dialog-header .act { flex:none; min-width:64px; }
+.activity-dialog .side { display:flex; flex-direction:column; gap:14px; }
+.activity-dialog .drill-settings { border:0; margin:0; }
+.activity-toolbar { display:flex; align-items:center; gap:8px; flex:none; }
+.activity-toolbar h2 { margin:0 auto 0 0; font-size:18px; }
+.activity-toolbar button.act { flex:none; min-width:0; padding:9px 12px; min-height:40px; font:600 12px 'Inter',sans-serif; }
+.activity-status { flex:none; min-height:24px; padding:6px 0; color:var(--cream-dim); font-size:11px; }
+body.activity-mode { height:100dvh; overflow:hidden; }
+body.activity-mode .app { height:100%; padding:10px 12px; display:flex; flex-direction:column; }
+body.activity-mode header { flex:none; margin:0 0 8px; padding:0 0 8px; gap:8px; align-items:center; }
+body.activity-mode .brand h1 { font-size:20px; }
+body.activity-mode .brand p { display:none; }
+body.activity-mode .brand-cat-icon { width:22px; height:22px; }
+body.activity-mode .tabs { border-radius:14px; }
+body.activity-mode .tab, body.activity-mode .nav-group summary { padding:8px 10px; font-size:12px; }
+body.activity-mode #table-panel, body.activity-mode #strategy-panel { padding:0; }
+body.activity-mode .activity-panel.active { display:flex; flex:1; min-height:0; padding:0; }
+.activity-panel > .grid { display:block; width:100%; min-width:0; min-height:0; }
+.activity-panel > .grid > .felt { display:flex !important; flex-direction:column; height:100%; min-height:0; padding:12px; }
+.activity-screen { flex:1; min-height:0; overflow:auto; display:flex; flex-direction:column; gap:8px; }
+.activity-screen > * { flex-shrink:0; }
+.activity-screen .feedback { margin:0; padding:8px 10px; font-size:12px; line-height:1.45; max-height:90px; overflow:auto; }
+.activity-screen .hand-row { flex:1; min-height:64px; margin:0; justify-content:center; }
+.activity-screen .row-label { margin:0; font-size:10px; }
+.activity-screen .actions { margin:0; gap:6px; }
+.activity-screen button.act { padding:10px 8px; min-height:42px; font-size:13px; }
+.activity-screen #bs-normal-actions, .activity-screen #bs-insurance-actions,
+.activity-screen #t-normal-actions, .activity-screen #t-insurance-actions,
+.activity-screen #t-mobile-deal-bar.deal-ready { position:static; padding:0; border:0; background:none; box-shadow:none; backdrop-filter:none; }
+.activity-screen #bs-normal-actions button.act { flex:1 1 28%; }
+.activity-screen #bs-timer-wrap { margin:0 !important; }
+.activity-screen .speedcount-stage, .activity-screen #cm-hand-row, .activity-screen .shoe-strip { flex:1; min-height:80px; padding:8px 0; align-items:center; justify-content:center; }
+.activity-screen .shoe-strip { justify-content:flex-start; }
+.activity-screen .settings-row { margin:0; flex-wrap:nowrap; gap:8px; align-items:center; }
+.activity-screen .settings-row label[style] { display:none; }
+.activity-screen .settings-row .field { flex:1; }
+.activity-screen .settings-row .field .act { width:100%; }
+.activity-screen #count-decks-readout { font-size:10px; }
+.activity-screen #sc-answer-buttons, .activity-screen #cm-answer-buttons { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+.activity-screen #check-form { margin:0 !important; }
+.activity-screen .inline-check { gap:6px; }
+.activity-screen #count-guess { width:100% !important; min-width:0; }
+/* Play uses three bands: dealer, lettering, seats; controls stay outside the felt. */
+#table-panel .activity-screen { gap:6px; }
+#table-panel .activity-screen #t-deck-tracker { margin:0; }
+#table-panel .activity-screen .aid-header { margin:0; }
+#table-panel .activity-screen .aid-header h3 { font-size:12px; }
+#table-panel .activity-screen .visibility-toggle { min-height:28px; padding:4px 12px; }
+#table-panel .activity-screen .deck-tracker-top { margin:0; }
+#table-panel .activity-screen .deck-bar-outer { height:6px; margin-top:4px; }
+#table-panel .activity-screen .deck-runner, #table-panel .activity-screen .cut-card-marker { display:none; }
+#table-panel .activity-screen #casino-table { flex:1; min-height:240px; display:grid; grid-template-rows:minmax(90px,1fr) auto minmax(100px,1fr); padding:8px 12px; margin:0; border-width:4px; border-radius:40px 40px 24px 24px; }
+#table-panel .activity-screen .dealer-spot { height:100%; justify-content:center; }
+#table-panel .activity-screen .cat-dealer { width:clamp(28px,5dvh,48px); height:clamp(28px,5dvh,48px); margin:0; }
+#table-panel .activity-screen .dealer-spot .seat-label { margin:0; font-size:9px; }
+#table-panel .activity-screen .dealer-hand-row { flex:none; min-height:0; margin:2px 0; }
+#table-panel .activity-screen .dealer-spot .card { width:42px; height:58px; font-size:11px; }
+#table-panel .activity-screen .card .suit-big { font-size:17px; }
+#table-panel .activity-screen .table-lettering { margin:2px 0; padding:5px 0; }
+#table-panel .activity-screen .table-lettering-title { font-size:14px; letter-spacing:1px; }
+#table-panel .activity-screen .table-lettering-rule { margin-top:3px; font-size:9px; }
+#table-panel .activity-screen .table-seat-hint { display:none; }
+#table-panel .activity-screen .seats-row { padding:8px 0 2px; min-height:0; gap:8px; }
+#table-panel .activity-screen .seats-row > .seat { min-width:136px; padding:5px 6px; border-radius:22px; display:flex; flex-direction:column; justify-content:center; }
+#table-panel .activity-screen .seats-row .seat-label { margin:0; line-height:1.3; font-size:9px; }
+#table-panel .activity-screen .seats-row .hand-row, #table-panel .activity-screen #t-user-row { flex:none; min-height:0; margin:4px 0; flex-wrap:nowrap; justify-content:center; overflow:auto; }
+#table-panel .activity-screen .seats-row .card { width:40px; height:56px; font-size:10px; }
+#table-panel .activity-screen .seats-row .hand-row > .card + .card { margin-left:-8px; }
+#table-panel .activity-screen .seats-row .notes { font-size:10px; }
+#table-panel .activity-screen .cat-widget-group, #table-panel .activity-screen .shoe-icon { display:none; }
+#table-panel .activity-screen .dealer-spot .result-banner { top:8px; left:calc(50% + 65px); }
+#table-panel .activity-screen .table-action-dock { flex:none; }
+#table-panel .activity-screen .table-action-dock > .actions { margin:0; }
+#table-panel .activity-screen #t-normal-actions button.act { flex:1 1 16%; min-width:0; font-size:12px; padding:10px 3px; }
+#table-panel .activity-screen #t-mobile-deal-bar { display:none !important; }
+#table-panel .activity-screen .chip-rail { order:0; flex:none; padding:0; margin:0; border:0; gap:8px; justify-content:center; flex-wrap:nowrap; }
+#table-panel .activity-screen .chip-rail .bet-spot { display:none; }
+#table-panel .activity-screen .chip-row { display:flex; gap:5px; }
+#table-panel .activity-screen .chip { width:34px; height:34px; font-size:9px; }
+#table-panel .activity-screen .chip-rail .act { flex:0 1 auto; min-width:0; font-size:11px; padding:9px 8px; }
+#table-panel .activity-screen #btn-clear-bet { font-size:0; }
+#table-panel .activity-screen #btn-clear-bet::after { content:'Clear'; font-size:11px; }
+#table-panel .activity-screen #t-feedback { max-height:64px; }
+@media(max-width:600px){
+ body.activity-mode .app { padding:6px; }
+ body.activity-mode header { display:grid; grid-template-columns:1fr; gap:5px; }
+ body.activity-mode .brand { display:none; }
+ body.activity-mode .nav-menu { top:52px; }
+ body.activity-mode .tabs { width:100%; flex-wrap:nowrap; padding:3px; gap:0; justify-content:space-between; }
+ body.activity-mode .tab, body.activity-mode .nav-group summary { font-size:11px; padding:8px; }
+ body.activity-mode .activity-panel > .grid > .felt { padding:8px; border-radius:14px; }
+ .activity-toolbar h2 { font-size:16px; }
+ .activity-toolbar button.act { font-size:11px; padding:8px 10px; }
+ .activity-dialog { padding:16px; max-height:92dvh; }
+ .dialog-header { top:-16px; margin:-16px -16px 16px; padding:14px 16px; }
+ .activity-screen .card { width:52px; height:74px; }
+ #table-panel .activity-screen #casino-table { padding:5px 7px; }
+ #table-panel .activity-screen .chip-rail { gap:5px; }
+ #table-panel .activity-screen .chip { width:31px; height:31px; }
+}
+
+body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
+#table-panel .activity-screen #t-deck-tracker { display:flex; align-items:center; gap:12px; }
+#table-panel .activity-screen #t-deck-details { flex:1; min-width:0; }
+#table-panel .activity-screen #t-deck-tracker .aid-header { flex:none; gap:8px; }
+#table-panel .activity-screen #t-deck-tracker .deck-tracker-top { font-size:10px; }
+#table-panel .activity-screen #t-deck-tracker .deck-tracker-top .notes { font-size:10px; }
+@media(max-width:600px){
+ body.activity-mode .nav-group:last-of-type .nav-menu { left:16px; right:16px; }
+}
+@media(max-height:650px) {
+ #table-panel .activity-screen #casino-table { min-height:210px; grid-template-rows:minmax(72px,1fr) auto minmax(86px,1fr); }
+ #table-panel .activity-screen .dealer-spot { display:grid; grid-template-columns:38px max-content; justify-content:center; column-gap:8px; }
+ #table-panel .activity-screen .cat-dealer { grid-row:1 / 3; width:38px; height:38px; }
+ #table-panel .activity-screen .dealer-spot .seat-label, #table-panel .activity-screen .dealer-hand-row { grid-column:2; }
+ #table-panel .activity-screen .dealer-spot .card { width:34px; height:46px; font-size:10px; }
+ #table-panel .activity-screen .table-lettering { padding:3px 0; }
+ #table-panel .activity-screen .table-lettering-rule { display:none; }
+ #table-panel .activity-screen .table-lettering-title { font-size:11px; }
+ #table-panel .activity-screen .seats-row .card { width:34px; height:46px; font-size:10px; }
+ #table-panel .activity-screen #t-feedback { max-height:50px; }
+}
+
+.dialog-header { flex-wrap:wrap; }
+.dialog-pause-note { flex:1 1 100%; margin:0; font-size:11px; }
+.activity-screen > .cat-chill-pair { display:none; }
+@media(min-width:900px) and (min-height:700px) {
+ #table-panel .activity-screen .cat-dealer { width:56px; height:56px; }
+ #table-panel .activity-screen .dealer-spot .card { width:62px; height:86px; font-size:15px; }
+ #table-panel .activity-screen .seats-row .card { width:54px; height:76px; font-size:13px; }
+ #table-panel .activity-screen .card .suit-big { font-size:23px; }
+}
 </style>
 </head>
 <body>
@@ -2539,14 +2677,14 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     bsTimerInterval = null;
     document.getElementById('bs-timer-wrap').style.display = 'none';
   }
-  function startBsTimer(){
+  function startBsTimer(seconds = BS_TIMER_SECONDS){
     clearBsTimer();
     if(!bsTimedModeOn()) return;
-    bsTimeLeft = BS_TIMER_SECONDS;
+    bsTimeLeft = seconds;
     const wrap = document.getElementById('bs-timer-wrap');
     const bar = document.getElementById('bs-timer-bar');
     wrap.style.display = 'block';
-    bar.style.width = '100%';
+    bar.style.width = ((seconds/BS_TIMER_SECONDS)*100).toFixed(1) + '%';
     bsTimerInterval = setInterval(()=>{
       bsTimeLeft -= 0.1;
       bar.style.width = Math.max(0, (bsTimeLeft/BS_TIMER_SECONDS)*100).toFixed(1) + '%';
@@ -2693,7 +2831,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
 
   document.getElementById('start-training').addEventListener('click', ()=>{ activateTab('strategy'); });
   document.addEventListener('keydown', e=>{
-    if(!e.repeat && !e.ctrlKey && !e.metaKey && !e.altKey && !e.target.closest('input, select, textarea, button, summary, [contenteditable]') && document.getElementById('strategy-panel').classList.contains('active')){
+    if(!document.querySelector('.activity-dialog[open]') && !e.repeat && !e.ctrlKey && !e.metaKey && !e.altKey && !e.target.closest('input, select, textarea, button, summary, [contenteditable]') && document.getElementById('strategy-panel').classList.contains('active')){
       const actions = {h:btnHit,s:btnStand,d:btnDouble,p:btnSplit,r:btnSurrender,n:btnNewHand};
       const button = actions[e.key.toLowerCase()];
       if(button && !button.disabled){ e.preventDefault(); button.click(); }
@@ -2702,6 +2840,8 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
   });
   // ---------------- Tabs ----------------
   function activateTab(tabName){
+    document.querySelectorAll('.activity-dialog[open]').forEach(dialog=>dialog.close());
+    document.body.classList.toggle('activity-mode', ['table','strategy','counting','speedcount','cardmath'].includes(tabName));
     document.querySelectorAll('.nav-group').forEach(el=>{ el.open = false; });
     document.querySelectorAll('.tab').forEach(el=>el.removeAttribute('aria-current'));
     document.querySelectorAll('.panel').forEach(el=>{ el.inert = true; });
@@ -2749,8 +2889,9 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
       `<span class="cheatsheet-label">${sys.name} cheat sheet</span>${chips}`;
   }
 
+  function stopCountingTimer(){ clearInterval(dealTimer); dealTimer = null; }
   function resetShoeState(){
-    clearInterval(dealTimer);
+    stopCountingTimer();
     shoe = buildShoe(RULES.decks);
     dealtCards = []; runningCount = 0;
     shoeStrip.innerHTML = '';
@@ -2764,7 +2905,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
   }
 
   function dealOneCard(){
-    if(shoe.length === 0){ clearInterval(dealTimer); countFeedback.textContent = 'Shoe is empty — reset to deal a fresh one.'; return; }
+    if(shoe.length === 0){ stopCountingTimer(); countFeedback.textContent = 'Shoe is empty — reset to deal a fresh one.'; return; }
     const card = shoe.pop();
     dealtCards.push(card);
     runningCount += countValue(card.rank, currentSystemKey());
@@ -2776,7 +2917,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     document.getElementById('c-decks-left').textContent = decksLeft.toFixed(1);
 
     if(dealtCards.length >= currentCardLimit()){
-      clearInterval(dealTimer);
+      stopCountingTimer();
       countFeedback.className = 'feedback info';
       countFeedback.textContent = `Drill complete — ${dealtCards.length} cards dealt. Check your count!`;
     }
@@ -4311,6 +4452,90 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
       unlockedAchievements = Object.fromEntries(ACHIEVEMENT_DEFS.filter(a=>data.unlockedAchievements?.[a.id]===true).map(a=>[a.id,true]));
     } catch { /* Ignore malformed or unavailable browser storage. */ }
   }
+  function openActivityDialog(dialog, id){
+    const remaining = bsTimerInterval !== null ? bsTimeLeft : BS_TIMER_SECONDS;
+    const pausedHand = playerHand;
+    const pausedShoe = shoe;
+    const resumeCounting = id==='counting' && dealTimer !== null;
+    if(id==='strategy') clearBsTimer();
+    if(resumeCounting) stopCountingTimer();
+    dialog.querySelector('.dialog-pause-note').hidden = !(resumeCounting || (id==='strategy' && bsDecisionActive && bsTimedModeOn()));
+    dialog.showModal();
+    dialog.addEventListener('close', ()=>{
+      if(!document.getElementById(id+'-panel').classList.contains('active')) return;
+      if(id==='strategy' && playerHand===pausedHand && bsDecisionActive && bsTimedModeOn()) startBsTimer(remaining);
+      if(resumeCounting && shoe===pausedShoe && shoe.length && dealtCards.length<currentCardLimit()){
+        dealTimer = setInterval(dealOneCard, Number(document.getElementById('deal-speed').value));
+      }
+    }, {once:true});
+  }
+  function initializeActivityShells(){
+    const definitions = [
+      ['table','Play','Aids & stats'], ['strategy','Strategy','Progress'],
+      ['counting','Counting','Stats & help'], ['speedcount','Count speed','Stats'], ['cardmath','Hand totals','Stats']
+    ];
+    for(const [id, title, statsLabel] of definitions){
+      const panel = document.getElementById(id+'-panel');
+      panel.classList.add('activity-panel');
+      const grid = panel.querySelector(':scope > .grid');
+      const felt = grid.querySelector(':scope > .felt');
+      const options = felt.querySelector('.drill-settings');
+      const side = grid.querySelector(':scope > .side');
+      function makeDialog(kind, heading){
+        const dialog = document.createElement('dialog');
+        dialog.className = 'activity-dialog'; dialog.id = id+'-'+kind+'-dialog';
+        dialog.setAttribute('aria-labelledby',dialog.id+'-title');
+        const header = document.createElement('div'); header.className = 'dialog-header';
+        const h2 = document.createElement('h2');h2.id = dialog.id+'-title';h2.textContent = heading;
+        const close = document.createElement('button');close.className = 'act dialog-close';close.textContent = 'Done';
+        close.addEventListener('click',()=>dialog.close());
+        const pauseNote = document.createElement('p');pauseNote.className = 'notes dialog-pause-note';pauseNote.hidden = true;pauseNote.textContent = 'Drill paused while this panel is open.';
+        header.append(h2,close,pauseNote);dialog.append(header);panel.append(dialog);
+        return dialog;
+      }
+      const optionsDialog = makeDialog('options',title+' options');
+      optionsDialog.append(options);
+      const statsDialog = makeDialog('stats',statsLabel);
+      statsDialog.append(side);
+      if(id==='strategy'){
+        optionsDialog.append(felt.querySelector('.training-intro'),felt.querySelector('.deck-tracker'));
+        side.prepend(felt.querySelector('#bs-strategy-visual'));
+      }
+      if(id==='counting'){
+        const reference = document.createElement('div');reference.className = 'stat-card';
+        reference.append(felt.querySelector('#count-cheatsheet'));side.prepend(reference);
+      }
+      if(id==='speedcount' || id==='cardmath'){
+        optionsDialog.append(felt.querySelector('.settings-row'),felt.querySelector('.deck-tracker'));
+      }
+      if(id==='table'){
+        optionsDialog.append(felt.querySelector('.settings-row'));
+        side.append(felt.querySelector('#t-round-summary'));
+      }
+      const toolbar = document.createElement('div');toolbar.className = 'activity-toolbar';
+      const h2 = document.createElement('h2');h2.textContent = title;
+      const setup = document.createElement('button');setup.className = 'act activity-options-button';setup.textContent = 'Options';
+      setup.setAttribute('aria-haspopup','dialog');setup.setAttribute('aria-controls',optionsDialog.id);
+      setup.addEventListener('click',()=>openActivityDialog(optionsDialog,id));
+      const stats = document.createElement('button');stats.className = 'act activity-stats-button';stats.textContent = statsLabel;
+      stats.setAttribute('aria-haspopup','dialog');stats.setAttribute('aria-controls',statsDialog.id);
+      stats.addEventListener('click',()=>openActivityDialog(statsDialog,id));
+      toolbar.append(h2,setup,stats);
+      const status = document.createElement('div');status.className = 'activity-status';
+      const screen = document.createElement('div');screen.className = 'activity-screen';
+      screen.append(...felt.childNodes);
+      felt.append(toolbar,status,screen);
+      const read = key=>document.getElementById(key).textContent;
+      const sources = id==='table' ? ['t-bankroll','t-bet-total-display','t-last-result'] : id==='strategy' ? ['s-acc','s-streak'] : id==='counting' ? ['c-dealt'] : id==='speedcount' ? ['sc-streak','sc-total'] : ['cm-streak'];
+      function updateStatus(){
+        status.textContent = id==='table' ? `Bank $${read('t-bankroll')} · Bet $${read('t-bet-total-display')} · Last ${read('t-last-result')}` : id==='strategy' ? `Accuracy ${read('s-acc')} · Streak ${read('s-streak')}` : id==='counting' ? `${read('c-dealt')} cards dealt` : id==='speedcount' ? `Streak ${read('sc-streak')} · Count ${read('sc-total')}` : `Streak ${read('cm-streak')}`;
+      }
+      const observer = new MutationObserver(updateStatus);
+      sources.forEach(key=>observer.observe(document.getElementById(key),{childList:true,subtree:true,characterData:true}));
+      updateStatus();
+    }
+  }
+
   // ---------------- init ----------------
   restoreProgress();
   renderTroubleSpots();
@@ -4344,6 +4569,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
   cmResetShoe();
   cmUpdateStats();
   cmDealNext();
+  initializeActivityShells();
   scheduleDeckRunners();
   syncMobileDealBar();
 })();

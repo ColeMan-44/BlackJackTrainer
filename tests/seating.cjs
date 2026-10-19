@@ -22,9 +22,11 @@ const assert=require('node:assert/strict');
  await page.route('http://blackjack.test/**',r=>r.fulfill({contentType:'text/html',body:html}));
  await page.goto('http://blackjack.test/');
  await page.locator('[data-tab="table"]').click();
+ await page.locator('#table-panel .activity-options-button').click();
  await page.locator('#t-ai-count').selectOption('2');
  for(const position of [0,1,2]){
    await page.locator('#t-user-position').selectOption(String(position));
+   await page.locator('#table-options-dialog .dialog-close').click();
    const order=[0,1];order.splice(position,0,'user');
    const initial={user:['5','6'],0:['2','2'],1:['3','3']};
    const shoe=[...order.map(p=>initial[p][0]),'10',...order.map(p=>initial[p][1]),'7'];
@@ -54,11 +56,12 @@ const assert=require('node:assert/strict');
    assert.deepEqual(after.ai,[['2','2','10','10'],['3','3','10','2']]);
    assert.equal(after.count,3,'count includes all exposed cards exactly once');
    assert.equal(await page.locator('#t-user-position').isEnabled(),true);
-   await page.locator('[data-tab="table"]').click();
+   await page.locator('#table-panel .activity-options-button').click();
  }
  // Seven players stay in one scrollable row at phone and desktop sizes.
  await page.locator('#t-ai-count').selectOption('6');
  await page.locator('#t-user-position').selectOption('3');
+ await page.locator('#table-options-dialog .dialog-close').click();
  await page.locator('[data-tab="table"]').click();
  for(const width of [1440,768,375,320]){
    await page.setViewportSize({width,height:1000});
@@ -69,6 +72,7 @@ const assert=require('node:assert/strict');
    if(width===375) await page.screenshot({path:'/tmp/seating-mobile.png',fullPage:true,animations:'disabled'});
  }
  await page.locator('[data-tab="table"]').click();
+ await page.locator('#table-panel .activity-options-button').click();
  await page.locator('#t-ai-count').selectOption('1');
  assert.equal(await page.locator('#t-user-position').inputValue(),'1','seat clamps when players are removed');
  assert.deepEqual(errors,[]);
