@@ -18,7 +18,7 @@ The normal portrait game and drill layouts fit the tested phone viewports, inclu
 
 ## Black, Jack, and the table
 
-**Black** is the black cat who reacts to your decisions and explains the strategy in a persistent coaching strip. **Jack** is the black-and-white dealer at the straight edge of the half-moon table. Cards animate from the draw shoe; completed hands are swept into the discard tray when the next round begins. The discard count tracks cleared prior rounds, while the draw counter tracks cards remaining in the shoe. Reduced-motion preferences skip card travel.
+**Black** is the black cat who reacts to your decisions and explains the strategy in a persistent coaching strip. **Jack** is the black-and-white dealer at the straight edge of the half-moon table. Cards animate from the draw shoe; completed hands are swept into the discard tray when the next round begins. The discard count tracks cleared prior rounds, while the draw counter tracks cards remaining in the shoe. Results appear as labels beneath the cards, including the exact amount won or lost; split-hand results show the combined net amount. Reduced-motion preferences skip card travel.
 
 **Table tools** contains strategy, counts, results, and an expandable **Dealt cards · current shoe** reference. That reference tracks exposed cards from Play only; the dealer’s hole card is included after it is revealed. It is no longer a Learn destination.
 

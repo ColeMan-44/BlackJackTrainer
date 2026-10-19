@@ -1184,6 +1184,42 @@ body.activity-mode .app-options-button { display:none; }
  #table-panel .activity-screen #t-normal-actions { gap:4px; }
  #table-panel .activity-screen #t-normal-actions button.act { font-size:11px; padding:10px 1px; }
 }
+
+/* Results are persistent labels beneath the cards, never floating action pills. */
+#table-panel .activity-screen #casino-table .result-banner {
+  position:static; inset:auto; transform:none; animation:none;
+  display:block; align-self:center; flex:none;
+  min-height:17px; max-width:100%; padding:1px 5px; margin:2px 0 0;
+  border:0; border-radius:0; background:none; box-shadow:none;
+  opacity:0; visibility:hidden; color:var(--cream-dim);
+  font:600 10px/1.4 'Inter',sans-serif; letter-spacing:.15px;
+  white-space:normal; text-align:center; overflow-wrap:anywhere;
+}
+#table-panel .activity-screen #casino-table .result-banner.show { opacity:1; visibility:visible; }
+#table-panel .activity-screen #casino-table .result-banner.win { color:#c1e8c9; background:none; }
+#table-panel .activity-screen #casino-table .result-banner.loss { color:#efafba; background:none; }
+#table-panel .activity-screen #casino-table .result-banner.push { color:#d2d5c8; background:none; }
+@media(max-height:650px){
+ #table-panel .activity-screen .dealer-spot { grid-template-areas:'cat label' 'cat cards' 'cat result'; }
+ #table-panel .activity-screen .dealer-spot .cat-dealer { grid-area:cat; }
+ #table-panel .activity-screen .dealer-spot > .seat-label { grid-area:label; }
+ #table-panel .activity-screen .dealer-spot .dealer-hand-row { grid-area:cards; }
+ #table-panel .activity-screen #casino-table .dealer-spot .result-banner { grid-area:result; min-height:14px; font-size:9px; }
+ #table-panel .activity-screen #casino-table .seats-row .result-banner { min-height:14px; font-size:9px; }
+}
+
+#table-panel .activity-screen #t-user-row { justify-content:safe center; gap:3px; }
+#table-panel .activity-screen #t-user-row > .card + .card { margin-left:-18px; }
+
+@media(max-height:650px){
+ #table-panel .activity-screen #t-feedback { max-height:28px; }
+ #table-panel .activity-screen #casino-table { grid-template-rows:64px auto minmax(90px,1fr); }
+ #table-panel .activity-screen .seats-row > .seat { padding:2px 4px; }
+ #table-panel .activity-screen .seats-row .total-chip { font-size:9px; line-height:11px; padding:1px 4px; }
+ #table-panel .activity-screen .seats-row .hand-row, #table-panel .activity-screen #t-user-row { margin:2px 0; }
+ #table-panel .activity-screen .seats-row .card { width:29px; height:40px; font-size:9px; }
+ #table-panel .activity-screen .seats-row .card .suit-big { font-size:13px; }
+}
 </style>
 </head>
 <body>
@@ -3900,6 +3936,7 @@ body.activity-mode .app-options-button { display:none; }
       const totalLine = document.createElement('div');
       totalLine.className = 'notes';
       seat.appendChild(totalLine);
+      seat.appendChild(banner);
       seatsRow.appendChild(seat);
       aiSeatEls.push({seatEl:seat, handRowEl:handRow, totalEl:totalLine, bannerEl:banner});
     }
@@ -4368,6 +4405,7 @@ body.activity-mode .app-options-button { display:none; }
   }
 
   async function finishRound(userResults, dealerUpVal, systemKey){
+    if(userResults.length>1) renderTableUserRow(userResults);
     disableAllUserButtons();
     if(!tableDealerBJAtStart) await playTableAISeats(tableUserSeatIndex+1, tableSeatOrder.length, dealerUpVal, systemKey);
     document.querySelectorAll('#t-seats-row .seat').forEach(el=>el.classList.remove('seat-current'));
@@ -4388,7 +4426,7 @@ body.activity-mode .app-options-button { display:none; }
     }
     const dealerTotal = total;
     const dealerBust = dealerTotal > 21;
-    showBanner(document.getElementById('t-dealer-banner'), dealerBust ? 'BUST' : String(dealerTotal), dealerBust ? 'loss' : 'push');
+    showBanner(document.getElementById('t-dealer-banner'), dealerBust ? `Bust · ${dealerTotal}` : String(dealerTotal), dealerBust ? 'loss' : 'push');
 
     function outcomeLabel(r){
       if(r.blackjack) return tableDealerBJAtStart ? 'Push (BJ)' : 'Blackjack!';
@@ -4408,7 +4446,11 @@ body.activity-mode .app-options-button { display:none; }
     const aiOutcomeStrings = tableAIResultsForRound.map((handsArr, idx)=>{
       const labels = handsArr.map(outcomeLabel);
       const seat = aiSeatEls[idx];
-      if(seat) showBanner(seat.bannerEl, labels[0].split(' ')[0].toUpperCase(), kindFor(labels[0]));
+      if(seat){
+        const kinds = labels.map(kindFor);
+        const kind = kinds.every(k=>k==='win') ? 'win' : kinds.every(k=>k==='loss') ? 'loss' : 'push';
+        showBanner(seat.bannerEl, labels.join(' / '), kind);
+      }
       return labels.join(', ');
     });
 
@@ -4429,9 +4471,12 @@ body.activity-mode .app-options-button { display:none; }
     if(tableInsuranceNetForRound !== 0){
       userOutcomeStrings.push(`Insurance ${tableInsuranceNetForRound>0?'+':''}${tableInsuranceNetForRound.toFixed(0)}`);
     }
-    const userPrimary = userOutcomeStrings[0] || '';
-    showBanner(document.getElementById('t-user-banner'), userPrimary.split(' ')[0].toUpperCase(), kindFor(userPrimary));
-    catReactToOutcome(kindFor(userPrimary));
+    const resultKind = netChange>0 ? 'win' : netChange<0 ? 'loss' : 'push';
+    const resultName = userResults.length>1 ? 'Split' : outcomeLabel(userResults[0]);
+    const money = new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:Number.isInteger(netChange)?0:2}).format(Math.abs(netChange));
+    const resultText = `${resultName} · ${netChange>0?'+':netChange<0?'−':''}${money}`;
+    showBanner(document.getElementById('t-user-banner'), resultText, resultKind);
+    catReactToOutcome(resultKind);
 
     tableBankroll += netChange;
     tableHandsPlayed++;
@@ -4625,6 +4670,7 @@ body.activity-mode .app-options-button { display:none; }
         optionsDialog.append(felt.querySelector('.settings-row'),felt.querySelector('.deck-tracker'));
       }
       if(id==='table'){
+        for(const seat of felt.querySelectorAll('.dealer-spot, .seat-user')) seat.append(seat.querySelector('.result-banner'));
         optionsDialog.append(felt.querySelector('.settings-row'));
         side.append(felt.querySelector('#t-round-summary'));
         const history = document.createElement('details'); history.className = 'stat-card dealt-card-history';
