@@ -428,7 +428,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
 .round-summary{ margin-top:18px; padding-top:14px; border-top:1px solid var(--felt-line); font-size:13.5px; color: var(--cream-dim); }
 .round-summary b{ color: var(--cream); }
 
-/* --- Casino table layout (sideways: dealer at the head, seats run left-to-right, you're last) --- */
+/* --- Casino table: dealer above the felt lettering and player hands --- */
 .table-felt{ position: relative; overflow: visible; }
 .casino-table{
   position: relative;
@@ -849,6 +849,74 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
 }
 @media(prefers-reduced-motion:reduce) {
   *, *::before, *::after { animation:none !important; transition:none !important; scroll-behavior:auto !important; }
+}
+
+/* Open felt layout: each region owns space, so cards never cover table rules. */
+#casino-table {
+  flex-direction:column;
+  flex-wrap:nowrap;
+  align-items:stretch;
+  gap:0;
+  padding:24px 24px 28px;
+  border-radius:100px 100px 46px 46px;
+  background:radial-gradient(ellipse at 50% 0%, #2a463a, #162c24 75%);
+}
+#casino-table .dealer-spot {
+  align-self:center;
+  width:100%;
+  min-width:0;
+  padding:0;
+  margin:0;
+  border:0;
+}
+#casino-table .cat-dealer { width:80px; height:80px; margin:0 0 4px; }
+#casino-table .dealer-hand-row { justify-content:center; min-height:116px; margin:4px 0 0; }
+#casino-table .dealer-spot .result-banner { top:82px; left:calc(50% + 78px); }
+.table-lettering {
+  flex:none;
+  text-align:center;
+  padding:22px 8px 26px;
+  margin:8px 0 20px;
+  border-top:1px solid #b8cbb32e;
+  border-bottom:1px solid #b8cbb32e;
+  pointer-events:none;
+}
+.table-lettering-title { display:block; font:italic 700 clamp(16px,2vw,24px) Georgia,serif; letter-spacing:2px; color:#c2c8a3; }
+.table-lettering-rule { display:block; margin-top:10px; font-size:11px; line-height:1.6; letter-spacing:1px; color:#a9bdb0; }
+#casino-table .seats-row { width:100%; min-width:0; justify-content:center; gap:24px 16px; }
+#casino-table .seat-user {
+  flex:1 1 100%; max-width:none; min-width:0;
+  padding:12px 0 0; border:0; border-radius:0; background:none; box-shadow:none;
+  text-align:center;
+}
+#casino-table .seat-user > .seat-label { color:#d9e5db; letter-spacing:2px; }
+#casino-table #t-user-row {
+  justify-content:center;
+  min-height:128px;
+  width:fit-content; min-width:210px; max-width:100%;
+  margin:12px auto 20px; padding:12px 24px;
+  box-sizing:border-box;
+  border:1px dashed #91b2a164;
+  border-radius:50% / 22%;
+  background:radial-gradient(ellipse, #7cb0910c, transparent 75%);
+}
+#casino-table .seat-user > .actions { justify-content:center; }
+#casino-table .seat-ai { background:#0b1c1526; border-color:#91b2a132; }
+#casino-table .seat-ai .hand-row { justify-content:center; }
+#casino-table .result-banner.win { background:#254c3c; border-color:#79b393; color:#e0f4e6; }
+#casino-table .cat-widget-group { bottom:12px; right:14px; }
+#casino-table .shoe-icon { left:28px; top:30px; }
+@media(max-width:600px) {
+  #casino-table { padding:18px 12px 22px; border-radius:48px 48px 28px 28px; }
+  #casino-table .cat-dealer { width:64px; height:64px; }
+  #casino-table .cat-widget-group { display:none; }
+  #casino-table .dealer-hand-row { min-height:78px; }
+  #casino-table .dealer-spot .result-banner { top:60px; left:calc(50% + 64px); }
+  .table-lettering { padding:16px 4px; margin:8px 0 16px; }
+  .table-lettering-title { font-size:15px; letter-spacing:1px; }
+  .table-lettering-rule { font-size:10px; letter-spacing:.2px; }
+  #casino-table #t-user-row { min-height:100px; min-width:160px; padding:12px 18px; }
+  #casino-table .seat-user { padding:8px 0 0; }
 }
 </style>
 </head>
@@ -1321,16 +1389,6 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
         </div>
 
         <div class="casino-table" id="casino-table">
-          <svg class="table-felt-text" viewBox="0 0 800 210" preserveAspectRatio="xMidYMid meet">
-            <path id="tableArc1" d="M 60 160 Q 400 20 740 160" fill="none"/>
-            <path id="tableArc2" d="M 100 185 Q 400 95 700 185" fill="none"/>
-            <text font-family="Georgia, serif" font-style="italic" font-weight="700" font-size="30" fill="rgba(201,162,75,0.32)" letter-spacing="2">
-              <textPath href="#tableArc1" startOffset="50%" text-anchor="middle">BLACKJACK PAYS 3 TO 2</textPath>
-            </text>
-            <text font-family="Georgia, serif" font-size="13" fill="rgba(244,239,228,0.22)" letter-spacing="1.8">
-              <textPath href="#tableArc2" startOffset="50%" text-anchor="middle">DEALER MUST STAND ON 17 &#8226; INSURANCE PAYS 2 TO 1</textPath>
-            </text>
-          </svg>
           <div class="shoe-icon" id="shoe-icon">🂠</div>
 
           <div class="cat-widget-group">
@@ -1401,6 +1459,11 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
             <div class="seat-label">Dealer</div>
             <div class="result-banner" id="t-dealer-banner"></div>
             <div class="hand-row dealer-hand-row" id="t-dealer-row"></div>
+          </div>
+
+          <div class="table-lettering" aria-label="Table rules">
+            <span class="table-lettering-title">BLACKJACK PAYS 3 TO 2</span>
+            <span class="table-lettering-rule" id="t-felt-rule">Dealer stands on soft 17 · Insurance pays 2 to 1</span>
           </div>
 
           <div class="seats-row" id="t-seats-row">
@@ -2193,6 +2256,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
   function refreshRulesSummary(){
     document.getElementById('rules-summary').textContent =
       `${RULES.decks}-deck · ${RULES.h17?'H17':'S17'} · DAS ${RULES.das?'on':'off'} · Surrender ${RULES.surrender?'on':'off'}`;
+    document.getElementById('t-felt-rule').textContent = `Dealer ${RULES.h17 ? 'hits' : 'stands on'} soft 17 · Insurance pays 2 to 1`;
     document.getElementById('count-decks-readout').textContent = `${RULES.decks}-deck shoe (set in Settings)`;
   }
   document.getElementById('g-decks').addEventListener('change', e=>{

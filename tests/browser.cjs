@@ -32,6 +32,17 @@ for(let i=0;i<25;i++){
 }
 await page.waitForFunction(()=>!document.getElementById('btn-table-deal').disabled,{},{timeout:20000});
 assert.equal(await page.locator('#btn-clear-bet').isEnabled(),true);
+// The dealer, lettering and player area must occupy separate vertical regions.
+for(const width of [1440,768,375,320]){
+ await page.setViewportSize({width,height:1000});
+ const layout=await page.evaluate(()=>{
+  const rect=s=>document.querySelector(s).getBoundingClientRect().toJSON();
+  return {dealer:rect('.dealer-spot'),text:rect('.table-lettering'),player:rect('#t-user-seat'),overflow:document.documentElement.scrollWidth>innerWidth};
+ });
+ assert.ok(layout.dealer.bottom<=layout.text.top,`dealer above lettering at ${width}`);
+ assert.ok(layout.text.bottom<=layout.player.top,`lettering above player at ${width}`);
+ assert.equal(layout.overflow,false,`Play overflow at ${width}`);
+}
 await page.setViewportSize({width:375,height:812});
 await page.locator('summary').filter({hasText:'Practice'}).click();
 await page.locator('.tab[data-tab="strategy"]').click();
