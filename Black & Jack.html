@@ -2356,6 +2356,7 @@ body.activity-mode .app-options-button { display:none; }
   function cardEl(card, big){
     const div = document.createElement('div');
     div.className = (big? 'card' : 'mini-card') + (card.red ? ' red' : '');
+    div.tableCard = card;
     div.dataset.rank = card.rank; div.dataset.suit = card.suit;
     div.innerHTML = `<span>${card.rank}</span><span class="suit-big">${card.suit}</span><span>${card.rank}</span>`;
     return div;
@@ -4010,16 +4011,32 @@ body.activity-mode .app-options-button { display:none; }
     resultsList.forEach((handsArr, idx)=>{
       const seat = aiSeatEls[idx];
       if(!seat) return;
-      seat.handRowEl.innerHTML = '';
-      handsArr.forEach(h=>{
-        const stack = document.createElement('div');stack.className = 'stack-hand';
-        h.cards.forEach(c=>stack.appendChild(cardEl(c,true)));seat.handRowEl.append(stack);
+      // Keep physical card nodes stable across other players' turns, including splits.
+      const row = seat.handRowEl;
+      const existing = new Map([...row.querySelectorAll('.card')].map(el=>[el.tableCard,el]));
+      const stacks = [...row.children].filter(el=>el.classList.contains('stack-hand'));
+      const retained = new Set();
+      handsArr.forEach((h,handIndex)=>{
+        const stack = stacks[handIndex] || document.createElement('div');
+        stack.className = 'stack-hand';
+        if(stack.parentElement!==row) row.append(stack);
+        h.cards.forEach((c,cardIndex)=>{
+          const card = existing.get(c) || cardEl(c,true);
+          retained.add(card);
+          if(stack.children[cardIndex]!==card){
+            // Reparenting a dealt card must not replay its entrance animation.
+            if(existing.has(c)) card.style.animation = 'none';
+            stack.insertBefore(card,stack.children[cardIndex] || null);
+          }
+        });
       });
+      for(const card of existing.values()) if(!retained.has(card)) card.remove();
+      stacks.slice(handsArr.length).forEach(stack=>stack.remove());
       const totals = handsArr.map(h=>{
         const {total, soft} = handValue(h.cards);
         return (h.busted ? 'Bust ' : (soft ? 'Soft ' : '')) + total;
       }).join(' / ');
-      seat.totalEl.textContent = totals;
+      if(seat.totalEl.textContent!==totals) seat.totalEl.textContent = totals;
     });
     layoutTableHands();
   }
@@ -4717,10 +4734,11 @@ body.activity-mode .app-options-button { display:none; }
       if(!cards.length || !hand.clientWidth || !hand.clientHeight) continue;
       const availableW = hand.clientWidth, availableH = hand.clientHeight;
       const preferredGap = 14;
-      const cardH = Math.min(availableH*(cards.length>1?.86:1),Math.max(18,Math.min(104,Math.max(30,availableH-preferredGap*(cards.length-1)),availableW*1.36)));
+      const dealer = hand.id==='t-dealer-row';
+      const cardH = dealer ? Math.max(1,Math.min(104,availableH,(availableW-6*(cards.length-1))/cards.length*1.4)) : Math.min(availableH*(cards.length>1?.86:1),Math.max(18,Math.min(104,Math.max(30,availableH-preferredGap*(cards.length-1)),availableW*1.36)));
       const cardW = cardH/1.4;
-      const stepX = cards.length>1 ? Math.min(18,Math.max(0,(availableW-cardW)/(cards.length-1))) : 0;
-      const stepY = cards.length>1 ? Math.min(22,(availableH-cardH)/(cards.length-1)) : 0;
+      const stepX = dealer ? cardW+6 : cards.length>1 ? Math.min(18,Math.max(0,(availableW-cardW)/(cards.length-1))) : 0;
+      const stepY = dealer ? 0 : cards.length>1 ? Math.min(22,(availableH-cardH)/(cards.length-1)) : 0;
       const startX = (availableW-cardW-stepX*(cards.length-1))/2;
       cards.forEach((card,index)=>{
         Object.assign(card.style,{width:cardW+'px',height:cardH+'px',left:(startX+index*stepX)+'px',top:((cards.length-1-index)*stepY)+'px',fontSize:Math.max(6.5,Math.min(15,cardW*.22))+'px',zIndex:String(index+1)});

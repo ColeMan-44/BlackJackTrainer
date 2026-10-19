@@ -19,11 +19,27 @@ const assert=require('node:assert/strict');
   soundOn=false;aiSeatEls.forEach(seat=>showBanner(seat.bannerEl,'Loss','loss'));
   showBanner(document.getElementById('t-user-banner'),'Loss · −$25','loss');
   layoutTableHands();
+ },stable(){
+  const before=aiSeatEls.map(seat=>[...seat.handRowEl.querySelectorAll('.card')]);
+  tableAIResultsForRound[0][0].cards.push({rank:'3',suit:'♥',red:true});
+  updateAISeatsFromResults(tableAIResultsForRound);
+  const unchanged=before.every((cards,i)=>cards.every((card,j)=>aiSeatEls[i].handRowEl.querySelectorAll('.card')[j]===card));
+  const cards=tableAIResultsForRound[0][0].cards;
+  tableAIResultsForRound[0]=[{cards:cards.slice(0,2),bet:1},{cards:cards.slice(2),bet:1}];
+  updateAISeatsFromResults(tableAIResultsForRound);
+  const splitStable=before[0].every(card=>aiSeatEls[0].handRowEl.contains(card));
+  const after=aiSeatEls.map(seat=>[...seat.handRowEl.querySelectorAll('.card')]);
+  updateAISeatsFromResults(tableAIResultsForRound);
+  return unchanged && splitStable && after.every((cards,i)=>cards.every((card,j)=>aiSeatEls[i].handRowEl.querySelectorAll('.card')[j]===card));
  },expose(){tableGraveyard=[{rank:'A',suit:'♠'},{rank:'A',suit:'♠'},{rank:'K',suit:'♥',red:true}];renderGraveyardManifest();}};
  // ---------------- init ----------------`);
  await page.route('http://blackjack.test/**',r=>r.fulfill({contentType:'text/html',body:html}));
  await page.goto('http://blackjack.test/');
  await page.locator('[data-tab="table"]').click();
+ await page.emulateMedia({reducedMotion:'no-preference'});
+ await page.evaluate(()=>window.handTest.preview(3,false,true));
+ assert.ok(await page.evaluate(()=>window.handTest.stable()),'turn updates and splits retain existing card nodes');
+ await page.emulateMedia({reducedMotion:'reduce'});
  const cut=page.locator('#t-deck-tracker .cut-card-marker');
  assert.ok(await cut.isVisible(),'red cut line is restored');
  assert.equal(await cut.evaluate(e=>Math.round(e.offsetLeft/e.parentElement.clientWidth*100)),15,'cut marker matches 15% shoe threshold');
@@ -43,11 +59,13 @@ const assert=require('node:assert/strict');
      cardsFit:hands.every(hand=>{const h=hand.getBoundingClientRect();return [...hand.children].filter(c=>c.classList.contains('card')).every(c=>{const r=c.getBoundingClientRect();return r.left>=h.left-1 && r.right<=h.right+1 && r.top>=h.top-1 && r.bottom<=h.bottom+1 && r.left>=table.left-1 && r.right<=table.right+1 && r.top>=table.top-1 && r.bottom<=table.bottom+1 && r.bottom<=Math.min(railBottom(r.left),railBottom(r.right))+1;});}),
      labelsFit:[...document.querySelectorAll('#t-seats-row .result-banner.show')].every(label=>{const r=label.getBoundingClientRect();return r.bottom<=Math.min(railBottom(r.left),railBottom(r.right))+1;}),
      newestOnTop:hands.every(hand=>{const cards=[...hand.children].filter(c=>c.classList.contains('card'));return cards.every((card,index)=>index===0 || Number(card.style.zIndex)>Number(cards[index-1].style.zIndex));}),
-     stepped:hands.every(hand=>{const cards=[...hand.children].filter(c=>c.classList.contains('card'));return cards.length<2 || cards.at(-1).getBoundingClientRect().top<cards[0].getBoundingClientRect().top;})};
+     dealerRow:[...document.querySelectorAll('#t-dealer-row > .card')].every((card,i,cards)=>!i || (Math.abs(card.offsetTop-cards[0].offsetTop)<1 && card.offsetLeft>=cards[i-1].offsetLeft+cards[i-1].offsetWidth)),
+     stepped:hands.filter(hand=>hand.id!=='t-dealer-row').every(hand=>{const cards=[...hand.children].filter(c=>c.classList.contains('card'));return cards.length<2 || cards.at(-1).getBoundingClientRect().top<cards[0].getBoundingClientRect().top;})};
    });
    assert.ok(geometry.screenFits,`screen fits ${count+1} seats at ${width}x${height}`);
    assert.ok(geometry.seatsFit,'no seat-strip side scrolling');
    assert.ok(geometry.cardsFit,`eight-card hands stay inside the table (${count+1} seats, ${width}x${height})`);
+   assert.ok(geometry.dealerRow,'dealer cards are side by side without overlap');
    assert.ok(geometry.stepped,'cards step upward');
    assert.ok(geometry.newestOnTop,'new cards overlap above earlier cards');
    assert.ok(geometry.labelsFit,'results stay within the curved rail');
