@@ -39,6 +39,11 @@ const assert=require('node:assert/strict');
  await page.evaluate(()=>window.resultTest.prepare(['8','10','8','8','3','2','10','10','5']));
  await page.locator('#btn-table-deal').click();await page.waitForFunction(()=>!document.getElementById('t-btn-split').disabled);
  await page.locator('#t-btn-split').click();
+ await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+ const splitSize=await page.locator('.split-hand-cards .card').evaluateAll(cards=>cards.map(card=>card.getBoundingClientRect().height));
+ assert.ok(splitSize.every(height=>height>=50),'active split cards are comfortably readable on mobile: '+JSON.stringify(splitSize));
+ assert.equal(await page.locator('.split-hand-group.active-hand').count(),1,'current hand is clearly highlighted');
+ await page.screenshot({path:'/tmp/active-split-phone.png',animations:'disabled'});
  await page.locator('#t-btn-double').click();
  await page.locator('#t-btn-hit').click(); // second hand reaches 20
  await page.locator('#t-btn-hit').click(); // busts with 25

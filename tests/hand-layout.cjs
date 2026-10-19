@@ -19,6 +19,9 @@ const assert=require('node:assert/strict');
   soundOn=false;aiSeatEls.forEach(seat=>showBanner(seat.bannerEl,'Loss','loss'));
   showBanner(document.getElementById('t-user-banner'),'Loss · −$25','loss');
   layoutTableHands();
+ },active(){
+  tableSplitHands=[{cards:[{rank:'8',suit:'♠'},{rank:'3',suit:'♥',red:true}],bet:1,done:false},{cards:[{rank:'8',suit:'♠'},{rank:'2',suit:'♠'}],bet:1,done:false}];
+  tableActiveHandIdx=0;renderSplitHandsRow();
  },async smooth(){
   const row=document.getElementById('t-user-row');
   const first=row.querySelector('.card');
@@ -90,6 +93,15 @@ const assert=require('node:assert/strict');
    if(count===6 && width===375) await page.screenshot({path:'/tmp/stepped-seats-phone.png',animations:'disabled'});
    if(count===6 && width===1440) await page.screenshot({path:'/tmp/stepped-seats-desktop.png',animations:'disabled'});
   }
+ }
+ for(const count of [0,2,6]){
+  await page.setViewportSize({width:375,height:667});
+  await page.evaluate(n=>{window.handTest.preview(n,false,true);window.handTest.active();},count);
+  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+  const split=await page.locator('#t-user-row').evaluate(row=>({height:row.clientHeight,scroll:row.scrollHeight,cards:[...row.querySelectorAll('.card')].map(c=>c.getBoundingClientRect().height),width:row.clientWidth,other:document.querySelector('.seat-ai')?.clientWidth}));
+  assert.ok(split.scroll<=split.height+1,'active split stays inside its seat: '+JSON.stringify({count,...split}));
+  assert.ok(split.cards.every(height=>height>=30),'crowded split cards retain readable size: '+JSON.stringify({count,...split}));
+  if(count) assert.ok(split.width>split.other*1.5,'split seat receives extra width');
  }
  await page.setViewportSize({width:1440,height:900});
  await page.evaluate(()=>window.handTest.preview(0,false,true));

@@ -204,7 +204,7 @@ header::after{
   background: rgba(201,162,75,0.1);
   box-shadow: 0 0 0 1px rgba(201,162,75,0.25), 0 0 14px rgba(201,162,75,0.25);
 }
-.split-hand-group.done-hand{ opacity:0.5; }
+.split-hand-group.done-hand{ opacity:0.8; }
 .split-hand-label{
   font-family:'JetBrains Mono',monospace; font-weight:700; font-size:11.5px;
   color: var(--sage); text-transform:uppercase; letter-spacing:0.6px;
@@ -1230,6 +1230,19 @@ body.activity-mode .app-options-button { display:none; }
 #casino-table .card.hand-layout-ready .suit-big { transition:font-size .22s ease-out; }
 #casino-table.layout-resizing .card { transition:none !important; }
 
+/* During a split, reserve the lower felt for the two playable hands. */
+#table-panel .activity-screen #casino-table.active-split-table {
+ grid-template-rows:80px 28px minmax(140px,1fr); min-height:280px;
+}
+#table-panel .activity-screen #casino-table.active-split-table.crowded-table {
+ grid-template-rows:64px 24px minmax(190px,1fr); min-height:310px;
+}
+#table-panel .activity-screen .active-split-table .table-lettering-rule { display:none; }
+#table-panel .activity-screen .active-split-table .table-lettering { padding:2px 0; }
+#table-panel .activity-screen .active-split-table .cat-dealer { width:28px; height:28px; }
+#table-panel .activity-screen .active-split-table .dealer-hand-row { height:40px; }
+#table-panel .activity-screen .active-split-table .split-hand-group { height:auto; }
+
 /* A compact rank/suit ledger replaces the old repeated-symbol manifest. */
 .exposed-card-table { width:100%; border-collapse:collapse; table-layout:fixed; font:12px 'JetBrains Mono',monospace; }
 .exposed-card-table caption { text-align:left; padding:8px 0 12px; font:11px/1.5 'Inter',sans-serif; color:var(--cream-dim); }
@@ -1266,8 +1279,8 @@ body.activity-mode .app-options-button { display:none; }
  position:absolute; flex:none; padding:2px 3px; margin:0; border-radius:4px;
 }
 #table-panel .activity-screen .stack-hand { position:relative; flex:1; min-width:0; height:100%; }
-#table-panel .activity-screen .split-hand-group { display:flex; flex-direction:column; flex:1; min-width:0; min-height:0; padding:1px; }
-#table-panel .activity-screen .split-hand-label { flex:none; font-size:8px; line-height:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#table-panel .activity-screen .split-hand-group { display:flex; flex-direction:column; align-self:stretch; height:100%; flex:1; min-width:0; min-height:0; gap:4px; padding:3px; }
+#table-panel .activity-screen .split-hand-label { flex:none; font-size:11px; line-height:14px; letter-spacing:0; white-space:pre-line; text-align:center; }
 #table-panel .activity-screen .split-hand-cards { position:relative; flex:1; min-height:20px; width:100%; }
 #table-panel .activity-screen #casino-table.crowded-table { min-height:280px; grid-template-rows:minmax(72px,.75fr) auto minmax(144px,1.25fr); }
 #table-panel .activity-screen #casino-table.crowded-table #t-seats-row { gap:4px; padding:2px 8px 10px; }
@@ -4083,7 +4096,7 @@ body.activity-mode .app-options-button { display:none; }
   function splitHandLabelText(h, idx, isActive){
     const {total, soft} = handValue(h.cards);
     const totalText = (h.busted ? 'Bust ' : (soft ? 'Soft ' : '')) + total;
-    return `Hand ${idx+1}${isActive ? ' — Playing' : (h.done ? ' — Done' : '')} · ${totalText}`;
+    return `Hand ${idx+1}${isActive ? ' ▶' : (h.done ? ' ✓' : '')}\n${totalText}`;
   }
   function renderSplitHandsRow(){
     const row = document.getElementById('t-user-row');
@@ -4730,13 +4743,31 @@ body.activity-mode .app-options-button { display:none; }
     const table = document.getElementById('casino-table');
     const seats = document.getElementById('t-seats-row');
     const players = [...seats.children];
-    const crowded = innerWidth<=600 && players.length>4;
+    const user = players.find(seat=>seat.classList.contains('seat-user'));
+    const split = Boolean(user?.querySelector('.split-hand-group')) || (user?.querySelectorAll('.stack-hand').length || 0)>1;
+    const units = players.length+(split?1:0);
+    const crowded = innerWidth<=600 && units>4;
     table.classList.toggle('crowded-table',crowded);
-    seats.style.setProperty('--seat-columns',crowded?8:players.length);
+    table.classList.toggle('active-split-table',Boolean(user?.querySelector('.split-hand-group')));
+    seats.style.setProperty('--seat-columns',crowded?8:units);
     seats.style.setProperty('--seat-rows',crowded?2:1);
-    players.forEach((seat,index)=>{
-      seat.style.transform = '';
-      seat.style.gridColumn = crowded ? index<4 ? 'span 2' : `${(8-(players.length-4)*2)/2+1+(index-4)*2} / span 2` : '';
+    // A split needs room for two hands rather than squeezing both into one seat.
+    const rows = [[]];
+    players.forEach(seat=>{
+      const span = split && seat===user ? 4 : 2;
+      let row = crowded ? rows.find(items=>items.reduce((sum,item)=>sum+item.span,0)+span<=8) : rows[0];
+      if(!row){row=[];rows.push(row);}
+      row.push({seat,span});
+    });
+    seats.style.gridTemplateRows = crowded && split ? rows.map(row=>row.some(item=>item.seat===user)?'minmax(0,1.6fr)':'minmax(0,1fr)').join(' ') : '';
+    rows.forEach((row,rowIndex)=>{
+      let column = 1+(8-row.reduce((sum,item)=>sum+item.span,0))/2;
+      row.forEach(({seat,span})=>{
+        seat.style.transform = '';
+        seat.style.gridColumn = crowded ? `${column} / span ${span}` : split && seat===user ? 'span 2' : '';
+        seat.style.gridRow = crowded ? String(rowIndex+1) : '';
+        column+=span;
+      });
     });
     for(const hand of table.querySelectorAll('.hand-row, .stack-hand, .split-hand-cards')){
       const cards = [...hand.children].filter(el=>el.classList.contains('card'));
