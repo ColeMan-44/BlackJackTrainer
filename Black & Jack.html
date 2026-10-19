@@ -778,7 +778,6 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
   .settings-row{ margin-bottom:12px; }
   .deck-tracker{ margin-bottom:12px; }
   .speedcount-stage{ padding:10px 0; min-height:88px; }
-  #settings-panel .row-label{ margin-top:18px !important; }
   .chip-rail{ margin-bottom:12px; }
 
   /* Sticky bottom action bar for the decision buttons */
@@ -1118,6 +1117,73 @@ body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
  #table-panel .activity-screen .seats-row .card { width:54px; height:76px; font-size:13px; }
  #table-panel .activity-screen .card .suit-big { font-size:23px; }
 }
+
+/* Black coaches from the rail; Jack deals from the straight edge of a half-moon table. */
+body.activity-mode .app-options-button { display:none; }
+.shared-options { margin-top:20px; padding-top:18px; border-top:1px solid var(--felt-line); }
+.shared-options > .felt { padding:0; border:0; background:none; box-shadow:none; overflow:visible; }
+.shared-options > .felt::before { display:none; }
+.shared-options .settings-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(135px,1fr)); align-items:start; }
+.dealt-card-history summary { cursor:pointer; font:600 14px 'Inter',sans-serif; }
+.dealt-cards > .felt { margin-top:14px; padding:0; border:0; background:none; box-shadow:none; }
+.dealt-cards .manifest-suits { flex-wrap:wrap; }
+#table-panel .activity-screen #casino-table {
+  border:7px solid #493022;
+  border-top-width:10px;
+  border-radius:18px 18px 50% 50% / 18px 18px 36% 36%;
+  padding:8px 14px 18px;
+  box-shadow:inset 0 0 0 2px #c2ad7544,inset 0 -15px 40px #07190d88,0 4px 0 #261c14,0 10px 20px #0005;
+  background:radial-gradient(ellipse at 50% 0%,#315442,#163326 80%);
+  overflow:visible;
+}
+#table-panel .activity-screen .dealer-spot { z-index:2; width:calc(100% - 100px); min-width:0; }
+#table-panel .activity-screen .table-lettering { border-bottom:0; border-top-color:#b3c79d33; border-radius:50% 50% 0 0 / 16px 16px 0 0; }
+#table-panel .activity-screen .seats-row { padding-left:10px; padding-right:10px; padding-bottom:4px; }
+#table-panel .activity-screen .seats-row > .seat { border-radius:40% 40% 18px 18px; background:#0b1c1510; }
+#table-panel .activity-screen .table-equipment { position:absolute; top:12px; display:flex; flex-direction:column; align-items:center; gap:4px; z-index:3; color:#c7c5ac; font-size:9px; }
+.draw-equipment { right:14px; }
+.discard-equipment { left:14px; }
+.table-equipment b { font-family:'JetBrains Mono',monospace; font-weight:500; }
+#table-panel .activity-screen .shoe-icon { display:none; }
+#table-panel .activity-screen #shoe-icon { position:relative; display:block; width:34px; height:44px; top:auto; left:auto; font-size:inherit; }
+.draw-stack i { position:absolute; inset:0; border-radius:5px; border:2px solid #e2d9c6; background:repeating-linear-gradient(45deg,#77273a 0px,#77273a 4px,#aa3b54 4px,#aa3b54 8px); box-shadow:1px 2px 2px #0005; }
+.draw-stack i:first-child { transform:translate(4px,4px); }
+.draw-stack i:nth-child(2) { transform:translate(2px,2px); }
+.discard-stack { width:38px; height:48px; border:1px solid #9ab3a66b; border-radius:5px; padding:3px; background:#0a1b163b; box-shadow:inset 0 0 0 2px #0d20187a; }
+.discard-stack span { display:flex; justify-content:center; align-items:center; width:100%; height:100%; border-radius:3px; font:600 10px 'JetBrains Mono',monospace; color:#20221b; }
+.discard-stack.has-cards span { background:var(--cream); box-shadow:1px 2px #6d7464,2px 3px #d1c9b4; }
+.discard-stack.has-cards span.red { color:var(--crimson); }
+.black-coach { display:flex; flex:none; align-items:center; gap:9px; padding:6px 8px; border:1px solid #91b2a13d; border-radius:14px; background:#0c1b14b3; min-height:58px; }
+#black-coach .cat-widget-group { display:flex; position:static; flex:none; pointer-events:none; }
+#black-coach .cat-widget, #black-coach .cat-widget svg { width:46px; height:46px; }
+#black-coach .cat-bubble { display:none; }
+.coach-speech { flex:1; min-width:0; }
+.coach-name { color:#d3bc7c; font:600 11px 'Inter',sans-serif; margin-bottom:3px; }
+.coach-name span { color:#a5b9a9; font-weight:400; }
+#table-panel .activity-screen #t-feedback { background:none; border:0; box-shadow:none; padding:0; font-size:11px; line-height:1.4; max-height:46px; }
+#table-panel .activity-screen #t-feedback.correct { color:#d0e8ca; }
+#table-panel .activity-screen #t-feedback.wrong { color:#eab1bf; }
+@media(max-height:650px) {
+ #table-panel .activity-screen #casino-table { min-height:190px; grid-template-rows:minmax(64px,1fr) auto minmax(74px,1fr); padding:5px 8px 12px; border-width:5px; border-top-width:7px; }
+ #table-panel .activity-screen .table-equipment { top:8px; font-size:8px; }
+ #table-panel .activity-screen #shoe-icon { width:27px; height:36px; }
+ .discard-stack { width:31px; height:39px; }
+ .draw-equipment { right:10px; } .discard-equipment { left:10px; }
+ #black-coach .cat-widget, #black-coach .cat-widget svg { width:38px; height:38px; }
+ .black-coach { min-height:52px; padding:4px 6px; }
+ #table-panel .activity-screen #t-feedback { max-height:40px; font-size:10px; }
+}
+
+#table-panel .activity-screen #black-coach .cat-widget-group { display:flex; position:static; }
+#table-panel .activity-screen .dealer-spot { justify-self:center; }
+#table-panel .activity-screen .seats-row > .seat { border:0; background:none; box-shadow:none; border-radius:0; }
+#table-panel .activity-screen .seats-row > .seat:only-child { flex:0 1 220px; margin:auto; }
+#table-panel .activity-screen .seats-row > .seat-current .seat-label { color:#e0efd8; }
+
+@media(max-width:360px){
+ #table-panel .activity-screen #t-normal-actions { gap:4px; }
+ #table-panel .activity-screen #t-normal-actions button.act { font-size:11px; padding:10px 1px; }
+}
 </style>
 </head>
 <body>
@@ -1161,9 +1227,8 @@ body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
         <button class="tab" data-tab="cheatsheet">Strategy Chart</button>
         <button class="tab" data-tab="math">The Math</button>
         <button class="tab" data-tab="simulator">Simulator</button>
-        <button class="tab" data-tab="graveyard">Dealt Cards</button>
       </div></details>
-      <button class="tab" data-tab="settings">Settings</button>
+      <button class="tab app-options-button" aria-haspopup="dialog" aria-controls="global-options-dialog">Options</button>
     </nav>
   </header>
 
@@ -1250,7 +1315,7 @@ body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
         </div>
       </div>
         </section>
-        <div class="training-intro"><h2>Find the best move</h2><p>1. Check the dealer’s upcard. 2. Choose your move. 3. Read the explanation and keep practicing.</p><p class="notes">Keyboard: H hit · S stand · D double · P split · R surrender · N next hand.</p><button class="hero-link" data-goto="settings">Shared table rules</button></div>
+        <div class="training-intro"><h2>Find the best move</h2><p>1. Check the dealer’s upcard. 2. Choose your move. 3. Read the explanation and keep practicing.</p><p class="notes">Keyboard: H hit · S stand · D double · P split · R surrender · N next hand.</p><p class="notes">Shared rules and sound are available below in Options.</p></div>
         <details class="deck-tracker"><summary>Shoe details &amp; reshuffle</summary>
           <div class="deck-tracker-top">
             <span class="row-label" style="margin-bottom:0;">Shoe</span>
@@ -1279,7 +1344,7 @@ body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
           <button class="act" id="btn-split" disabled>Split</button>
           <button class="act" id="btn-surrender" disabled>Surrender</button>
         </div>
-        <div class="feedback info" role="status" aria-live="polite" id="bs-feedback">Deal a hand to begin. Strategy uses the shared table rules in Settings.</div>
+        <div class="feedback info" role="status" aria-live="polite" id="bs-feedback">Deal a hand to begin. Strategy uses the shared table rules in Options.</div>
         <div id="bs-strategy-visual"></div>
       </div>
       <div class="side">
@@ -1627,7 +1692,7 @@ body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
         </div>
         <div class="field"><label style="visibility:hidden">run</label><button class="act primary" id="btn-run-sim">Run simulation</button></div>
       </div>
-      <div class="feedback info" id="sim-status">Uses the shared table rules in Settings. Runs instantly in your browser — nothing is sent anywhere. Leave "hours to play" blank to just use the hands dropdown.</div>
+      <div class="feedback info" id="sim-status">Uses the shared table rules in Options. Runs instantly in your browser — nothing is sent anywhere. Leave "hours to play" blank to just use the hands dropdown.</div>
       <p class="notes" style="margin-top:-8px; margin-bottom:14px;">Martingale and Paroli change how fast you win or lose, and how big your swings feel — they don't change the underlying house edge. Only a count-based spread does that, and only if you're actually counting.</p>
 
       <div id="sim-result-wrap" style="display:none;">
@@ -1702,40 +1767,15 @@ body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
         </div>
 
         <div class="casino-table" id="casino-table">
-          <div class="shoe-icon" id="shoe-icon">🂠</div>
-
-          <div class="cat-widget-group">
-            <div class="cat-widget idle" id="cat-widget">
-              <div class="cat-bubble" id="cat-bubble"></div>
-              <svg viewBox="0 0 100 100" width="64" height="64">
-                <path class="cat-tail" d="M75,80 Q97,72 90,44" stroke="#181614" stroke-width="9" fill="none" stroke-linecap="round"/>
-                <ellipse cx="50" cy="80" rx="29" ry="17" fill="#181614"/>
-                <circle cx="50" cy="49" r="25" fill="#181614"/>
-                <path d="M27,33 L19,9 L42,26 Z" fill="#181614"/>
-                <path d="M73,33 L81,9 L58,26 Z" fill="#181614"/>
-                <path d="M29,29 L25,16 L38,25 Z" fill="#3a2a1c"/>
-                <path d="M71,29 L75,16 L62,25 Z" fill="#3a2a1c"/>
-                <g class="cat-eyes cat-eyes-idle">
-                  <ellipse cx="41" cy="47" rx="4" ry="6" fill="#c9a24b"/>
-                  <ellipse cx="59" cy="47" rx="4" ry="6" fill="#c9a24b"/>
-                  <circle cx="41" cy="48" r="1.6" fill="#12100e"/>
-                  <circle cx="59" cy="48" r="1.6" fill="#12100e"/>
-                </g>
-                <g class="cat-eyes cat-eyes-happy">
-                  <path d="M35,47 Q41,41 47,47" stroke="#c9a24b" stroke-width="3" fill="none" stroke-linecap="round"/>
-                  <path d="M53,47 Q59,41 65,47" stroke="#c9a24b" stroke-width="3" fill="none" stroke-linecap="round"/>
-                </g>
-                <g class="cat-eyes cat-eyes-sad">
-                  <path d="M35,45 L47,50" stroke="#c9a24b" stroke-width="3" stroke-linecap="round"/>
-                  <path d="M65,45 L53,50" stroke="#c9a24b" stroke-width="3" stroke-linecap="round"/>
-                </g>
-                <path class="cat-mouth cat-mouth-idle" d="M46,59 Q50,62 54,59" stroke="#c9a24b" stroke-width="2" fill="none" stroke-linecap="round"/>
-                <path class="cat-mouth cat-mouth-happy" d="M42,57 Q50,68 58,57" stroke="#c9a24b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                <path class="cat-mouth cat-mouth-sad" d="M42,63 Q50,55 58,63" stroke="#c9a24b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                <path d="M21,51 L3,47 M21,55 L3,57 M79,51 L97,47 M79,55 L97,57" stroke="#c9a24b" stroke-width="1.2" opacity="0.55"/>
-              </svg>
-            </div>
+          <div class="table-equipment draw-equipment" aria-label="Draw shoe">
+            <div class="draw-stack" id="shoe-icon"><i></i><i></i><i></i></div>
+            <span>Draw <b id="draw-pile-count">312</b></span>
           </div>
+          <div class="table-equipment discard-equipment" aria-label="Discard tray">
+            <div class="discard-stack" id="discard-pile"><span id="discard-top"></span></div>
+            <span>Discard <b id="discard-pile-count">0</b></span>
+          </div>
+
 
           <div class="dealer-spot">
             <div class="cat-dealer" id="cat-dealer">
@@ -1769,7 +1809,7 @@ body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
                 </g>
               </svg>
             </div>
-            <div class="seat-label">Dealer</div>
+            <div class="seat-label">Jack · Dealer</div>
             <div class="result-banner" id="t-dealer-banner"></div>
             <div class="hand-row dealer-hand-row" id="t-dealer-row"></div>
           </div>
@@ -1822,7 +1862,42 @@ body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
           <button class="act primary" id="btn-table-deal">Deal round</button>
         </div>
 
-        <div class="feedback info" role="status" aria-live="polite" id="t-feedback">Click chips to set your bet, then deal a round. Only your hand gets strategy feedback — the AI seats play basic strategy automatically so the count stays realistic.</div>
+        <div class="black-coach" id="black-coach" aria-label="Black, your blackjack coach">
+          <div class="cat-widget-group">
+            <div class="cat-widget idle" id="cat-widget">
+              <div class="cat-bubble" id="cat-bubble"></div>
+              <svg viewBox="0 0 100 100" width="64" height="64">
+                <path class="cat-tail" d="M75,80 Q97,72 90,44" stroke="#181614" stroke-width="9" fill="none" stroke-linecap="round"/>
+                <ellipse cx="50" cy="80" rx="29" ry="17" fill="#181614"/>
+                <circle cx="50" cy="49" r="25" fill="#181614"/>
+                <path d="M27,33 L19,9 L42,26 Z" fill="#181614"/>
+                <path d="M73,33 L81,9 L58,26 Z" fill="#181614"/>
+                <path d="M29,29 L25,16 L38,25 Z" fill="#3a2a1c"/>
+                <path d="M71,29 L75,16 L62,25 Z" fill="#3a2a1c"/>
+                <g class="cat-eyes cat-eyes-idle">
+                  <ellipse cx="41" cy="47" rx="4" ry="6" fill="#c9a24b"/>
+                  <ellipse cx="59" cy="47" rx="4" ry="6" fill="#c9a24b"/>
+                  <circle cx="41" cy="48" r="1.6" fill="#12100e"/>
+                  <circle cx="59" cy="48" r="1.6" fill="#12100e"/>
+                </g>
+                <g class="cat-eyes cat-eyes-happy">
+                  <path d="M35,47 Q41,41 47,47" stroke="#c9a24b" stroke-width="3" fill="none" stroke-linecap="round"/>
+                  <path d="M53,47 Q59,41 65,47" stroke="#c9a24b" stroke-width="3" fill="none" stroke-linecap="round"/>
+                </g>
+                <g class="cat-eyes cat-eyes-sad">
+                  <path d="M35,45 L47,50" stroke="#c9a24b" stroke-width="3" stroke-linecap="round"/>
+                  <path d="M65,45 L53,50" stroke="#c9a24b" stroke-width="3" stroke-linecap="round"/>
+                </g>
+                <path class="cat-mouth cat-mouth-idle" d="M46,59 Q50,62 54,59" stroke="#c9a24b" stroke-width="2" fill="none" stroke-linecap="round"/>
+                <path class="cat-mouth cat-mouth-happy" d="M42,57 Q50,68 58,57" stroke="#c9a24b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                <path class="cat-mouth cat-mouth-sad" d="M42,63 Q50,55 58,63" stroke="#c9a24b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                <path d="M21,51 L3,47 M21,55 L3,57 M79,51 L97,47 M79,55 L97,57" stroke="#c9a24b" stroke-width="1.2" opacity="0.55"/>
+              </svg>
+            </div>
+          </div>
+          <div class="coach-speech"><div class="coach-name">Black <span>· Your coach</span></div>
+        <div class="feedback info" role="status" aria-live="polite" id="t-feedback">I’m Black, your coach. Place a bet and deal. Watch Jack’s upcard, then choose your move — I’ll explain the strategy.</div>          </div>
+        </div>
         <div id="t-round-summary"></div>
       </div>
 
@@ -1865,7 +1940,7 @@ body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
   </section>
 
   <!-- ===================== GRAVEYARD PANEL ===================== -->
-  <section id="graveyard-panel" class="panel">
+  <section id="dealt-cards" class="dealt-cards" hidden>
     <div class="felt">
       <div class="row-label">Full deck list — current Play Table shoe</div>
       <p class="notes" style="margin-bottom:16px;">Every card in the shoe you're using at the Play Table, laid out in place. Faded cards are still in the shoe; a card lights up the moment it's actually dealt (the dealer's hole card lights up only once it's revealed). Resets whenever that shoe reshuffles.</p>
@@ -1915,7 +1990,7 @@ body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
       </div>
       
       <div class="row-label">Full basic strategy chart</div>
-      <p class="notes" style="margin-bottom:14px;">A single reference card for every hand — reflects the shared table rules in Settings (decks, S17/H17, DAS, surrender), and updates automatically if you change them.</p>
+      <p class="notes" style="margin-bottom:14px;">A single reference card for every hand — reflects the shared table rules in Options (decks, S17/H17, DAS, surrender), and updates automatically if you change them.</p>
       <button class="act no-print" id="btn-print-cheatsheet" style="margin-bottom:18px;">Print / Save as PDF</button>
       <div id="cheatsheet-tables"></div>
     </div>
@@ -2088,7 +2163,7 @@ body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
   </section>
 
   <!-- ===================== SETTINGS PANEL ===================== -->
-  <section id="settings-panel" class="panel">
+  <section id="shared-options" class="shared-options" hidden>
     <div class="felt">
       <div class="row-label">Table rules</div><p class="notes">Standard 4–8 deck blackjack, 3:2 payout, dealer checks for blackjack, double on any first two cards, one split per hand, and one card per split Ace. Single- and double-deck strategy is not supported yet. Soft 17 means an Ace counts as 11; late surrender returns half your bet before you play, after the dealer checks for blackjack.</p>
       <p class="notes" id="rules-summary" style="margin-bottom:14px;"></p>
@@ -2473,7 +2548,7 @@ body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
     document.getElementById('rules-summary').textContent =
       `${RULES.decks}-deck · ${RULES.h17?'H17':'S17'} · DAS ${RULES.das?'on':'off'} · Surrender ${RULES.surrender?'on':'off'}`;
     document.getElementById('t-felt-rule').textContent = `Dealer ${RULES.h17 ? 'hits' : 'stands on'} soft 17 · Insurance pays 2 to 1`;
-    document.getElementById('count-decks-readout').textContent = `${RULES.decks}-deck shoe (set in Settings)`;
+    document.getElementById('count-decks-readout').textContent = `${RULES.decks}-deck shoe (set in Options)`;
   }
   document.getElementById('g-decks').addEventListener('change', e=>{
     RULES.decks = parseInt(e.target.value,10);
@@ -3490,11 +3565,12 @@ body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
   let tableSessionStats = {total:0, correct:0};
   let aiSeatEls = [];
   let tableGraveyard = [];
+  let tableDiscardCount = 0;
 
   // ---------------- Cat mascot ----------------
   let catRevertTimer = null;
   const CAT_GOOD_LINES = ['Nice!', 'Purrfect.', "That's it.", 'Smooth.', 'Good call.', 'Meow yes.'];
-  const CAT_BAD_LINES = ['Hmm...', 'Not quite.', 'Ouch.', 'Really?', 'Meow?', 'Try again.'];
+  const CAT_BAD_LINES = ['Let’s review.', 'You’re learning.', 'Try this instead.', 'Keep practicing.'];
   const CAT_WIN_LINES = ['We won!', 'Nice hand!', "Let's go!", 'Cha-ching.'];
   const CAT_LOSS_LINES = ['Ruh-roh.', 'Tough beat.', 'Hiss...', 'Next hand.'];
   const CAT_PUSH_LINES = ['Push.', 'Even.', 'No harm.'];
@@ -3536,6 +3612,8 @@ body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
   function tableResetShoe(){
     tableShoeState = createShoeState(RULES);
     tableGraveyard = [];
+    tableDiscardCount = 0;
+    updateDiscardTray();
     updateTableDeckVisual();
     updateTableCountDisplay();
     renderGraveyardManifest();
@@ -3547,6 +3625,7 @@ body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
     const pct = total ? (remaining/total*100) : 0;
     document.getElementById('t-deck-bar').style.width = pct.toFixed(1) + '%';
     document.getElementById('t-deck-text').textContent = `${remaining} / ${total} cards`;
+    document.getElementById('draw-pile-count').textContent = remaining;
   }
   const MANIFEST_RANKS = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
   const MANIFEST_SUITS = [ {sym:'♠', red:false}, {sym:'♣', red:false}, {sym:'♥', red:true}, {sym:'♦', red:true} ];
@@ -3651,8 +3730,35 @@ body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
     return div;
   }
 
+  function updateDiscardTray(){
+    document.getElementById('discard-pile-count').textContent = tableDiscardCount;
+    const top = document.getElementById('discard-top');
+    const last = tableDiscardCount ? tableGraveyard[tableDiscardCount-1] : null;
+    top.textContent = last ? last.rank + last.suit : '';
+    top.classList.toggle('red', Boolean(last?.red));
+    document.getElementById('discard-pile').classList.toggle('has-cards', Boolean(last));
+  }
+  async function collectTableCards(){
+    const cards = [...document.querySelectorAll('#casino-table .hand-row .card')];
+    if(!cards.length){ tableDiscardCount = tableGraveyard.length; updateDiscardTray(); return; }
+    const target = document.getElementById('discard-pile').getBoundingClientRect();
+    if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+      for(const card of cards.slice(-8)){
+        const from = card.getBoundingClientRect();
+        const ghost = card.cloneNode(true); ghost.classList.remove('deal-in'); ghost.classList.add('discard-flight');
+        Object.assign(ghost.style,{position:'fixed',left:from.left+'px',top:from.top+'px',width:from.width+'px',height:from.height+'px',margin:'0',zIndex:'50',pointerEvents:'none'});
+        document.body.append(ghost);
+        const animation = ghost.animate([{transform:'none',opacity:1},{transform:`translate(${target.left-from.left}px,${target.top-from.top}px) scale(.65)`,opacity:0}],{duration:220,easing:'ease-in'});
+        animation.finished.then(()=>ghost.remove(),()=>ghost.remove());
+      }
+      await sleep(220);
+    }
+    tableDiscardCount = tableGraveyard.length;
+    updateDiscardTray();
+  }
   // --- animation helpers ---
   function animateFromShoe(el){
+    if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const shoe = document.getElementById('shoe-icon');
     const shoeRect = shoe.getBoundingClientRect();
     const elRect = el.getBoundingClientRect();
@@ -3728,6 +3834,7 @@ body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
   }
   function rebuildTableSeats(){
     if(tableRoundActive) return;
+    tableDiscardCount = tableGraveyard.length; updateDiscardTray();
     buildAISeats(Number(document.getElementById('t-ai-count').value));
     document.getElementById('t-user-row').replaceChildren();
     document.getElementById('t-user-total').textContent = '';
@@ -3916,7 +4023,7 @@ body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
     document.getElementById('t-btn-surrender').disabled = !tableUserCanDouble || bust || !tableRoundActive || !RULES.surrender;
   }
   function setRoundControlsLocked(locked){
-    document.querySelectorAll('#settings-panel select, #table-panel .drill-settings select, .chip, #btn-clear-bet, #btn-table-reshuffle, #btn-table-reset-bankroll, #t-system').forEach(el=>{ el.disabled = locked; });
+    document.querySelectorAll('#shared-options select, #table-panel .drill-settings select, .chip, #btn-clear-bet, #btn-table-reshuffle, #btn-table-reset-bankroll, #t-system').forEach(el=>{ el.disabled = locked; });
   }
 
   function disableAllUserButtons(){
@@ -3990,6 +4097,7 @@ body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
     const aiCount = parseInt(document.getElementById('t-ai-count').value, 10);
     const systemKey = tableSystemKey();
 
+    await collectTableCards();
     buildAISeats(aiCount);
     document.getElementById('t-dealer-row').innerHTML = '';
     document.getElementById('t-user-row').innerHTML = '';
@@ -4459,6 +4567,7 @@ body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
     const resumeCounting = id==='counting' && dealTimer !== null;
     if(id==='strategy') clearBsTimer();
     if(resumeCounting) stopCountingTimer();
+    if(dialog.id.endsWith('-options-dialog')) dialog.append(document.getElementById('shared-options'));
     dialog.querySelector('.dialog-pause-note').hidden = !(resumeCounting || (id==='strategy' && bsDecisionActive && bsTimedModeOn()));
     dialog.showModal();
     dialog.addEventListener('close', ()=>{
@@ -4470,8 +4579,15 @@ body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
     }, {once:true});
   }
   function initializeActivityShells(){
+    const shared = document.getElementById('shared-options'); shared.hidden = false;
+    const globalOptions = document.createElement('dialog'); globalOptions.id = 'global-options-dialog';globalOptions.className = 'activity-dialog';
+    globalOptions.setAttribute('aria-labelledby','global-options-title');
+    globalOptions.innerHTML = '<div class="dialog-header"><h2 id="global-options-title">Options</h2><button class="act dialog-close">Done</button></div>';
+    globalOptions.querySelector('.dialog-close').addEventListener('click',()=>globalOptions.close());
+    globalOptions.append(shared); document.body.append(globalOptions);
+    document.querySelector('.app-options-button').addEventListener('click',()=>{ globalOptions.append(shared); globalOptions.showModal(); });
     const definitions = [
-      ['table','Play','Aids & stats'], ['strategy','Strategy','Progress'],
+      ['table','Play','Table tools'], ['strategy','Strategy','Progress'],
       ['counting','Counting','Stats & help'], ['speedcount','Count speed','Stats'], ['cardmath','Hand totals','Stats']
     ];
     for(const [id, title, statsLabel] of definitions){
@@ -4511,6 +4627,10 @@ body.activity-mode .nav-group:last-of-type .nav-menu { left:auto; right:0; }
       if(id==='table'){
         optionsDialog.append(felt.querySelector('.settings-row'));
         side.append(felt.querySelector('#t-round-summary'));
+        const history = document.createElement('details'); history.className = 'stat-card dealt-card-history';
+        const summary = document.createElement('summary'); summary.textContent = 'Dealt cards · current shoe';
+        const manifest = document.getElementById('dealt-cards'); manifest.hidden = false;
+        history.append(summary,manifest); side.append(history);
       }
       const toolbar = document.createElement('div');toolbar.className = 'activity-toolbar';
       const h2 = document.createElement('h2');h2.textContent = title;

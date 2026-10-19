@@ -10,11 +10,17 @@ Use **Start training** for the basic strategy drill. The drill tests decisions; 
 
 ## App layout and options
 
-Play and the four practice activities use a screen-sized layout: cards, primary controls, feedback, and a compact status line stay together. Choose **Options** inside the current activity to change its setup. Choose **Aids & stats**, **Progress**, or **Stats & help** for secondary information, strategy reference, and detailed results. Close a panel with **Done** or Escape; keyboard focus returns to its opener. Timed strategy and counting drills pause while their activity panels are open and resume when closed. Changing counting options resets that drill instead of resuming old settings.
+Play and the four practice activities use a screen-sized layout: cards, primary controls, feedback, and a compact status line stay together. Choose **Options** inside the current activity to change its setup. Choose **Table tools**, **Progress**, or **Stats & help** for secondary information, strategy reference, and detailed results. Close a panel with **Done** or Escape; keyboard focus returns to its opener. Timed strategy and counting drills pause while their activity panels are open and resume when closed. Changing counting options resets that drill instead of resuming old settings.
 
-Activity options cover Basic Strategy (timer and insurance), Card Counting (system, speed, drill length), Counting Speed (system, cards per round, running total), Hand Totals (total visibility), and Play (players, seat, counting system). Strategy guide and Table count have matching Show/Hide buttons in **Aids & stats**; Shoe has the same control on the game screen. These remain available during a round. Shared table rules and sound remain in Settings.
+Activity options cover Basic Strategy (timer and insurance), Card Counting (system, speed, drill length), Counting Speed (system, cards per round, running total), Hand Totals (total visibility), and Play (players, seat, counting system). Strategy guide and Table count have matching Show/Hide buttons in **Table tools**; Shoe has the same control on the game screen. These remain available during a round. Shared table rules and sound live in the same **Options** panel, using a single shared set of controls across activities. The home and learning screens also have an Options button; there is no separate Settings tab.
 
 The normal portrait game and drill layouts fit the tested phone viewports, including 320×568. Longer reference material, detailed panels, and constrained views such as landscape or a large text size can still scroll; multiple player seats scroll horizontally. This remains a browser application, without installation or offline PWA support yet.
+
+## Black, Jack, and the table
+
+**Black** is the black cat who reacts to your decisions and explains the strategy in a persistent coaching strip. **Jack** is the black-and-white dealer at the straight edge of the half-moon table. Cards animate from the draw shoe; completed hands are swept into the discard tray when the next round begins. The discard count tracks cleared prior rounds, while the draw counter tracks cards remaining in the shoe. Reduced-motion preferences skip card travel.
+
+**Table tools** contains strategy, counts, results, and an expandable **Dealt cards · current shoe** reference. That reference tracks exposed cards from Play only; the dealer’s hole card is included after it is revealed. It is no longer a Learn destination.
 
 ## Player seating
 
