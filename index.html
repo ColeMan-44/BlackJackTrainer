@@ -506,7 +506,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
 }
 
 /* card deal-in animation */
-.card.deal-in, .mini-card.deal-in{ transition: transform .45s cubic-bezier(.22,.9,.3,1.1), opacity .3s ease; }
+.card.deal-in, .mini-card.deal-in{ animation:none; transition: transform .45s cubic-bezier(.22,.9,.3,1.1), opacity .3s ease; }
 
 /* --- Chips / betting --- */
 .chip-rail{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; margin-bottom:18px; }
@@ -1220,6 +1220,15 @@ body.activity-mode .app-options-button { display:none; }
  #table-panel .activity-screen .seats-row .card { width:29px; height:40px; font-size:9px; }
  #table-panel .activity-screen .seats-row .card .suit-big { font-size:13px; }
 }
+
+/* Ease existing cards into the next hand layout without replaying the deal. */
+#casino-table .card.hand-layout-ready {
+ transition: left .22s ease-out, top .22s ease-out, width .22s ease-out,
+             height .22s ease-out, font-size .22s ease-out,
+             transform .45s cubic-bezier(.22,.9,.3,1), opacity .3s ease;
+}
+#casino-table .card.hand-layout-ready .suit-big { transition:font-size .22s ease-out; }
+#casino-table.layout-resizing .card { transition:none !important; }
 
 /* A compact rank/suit ledger replaces the old repeated-symbol manifest. */
 .exposed-card-table { width:100%; border-collapse:collapse; table-layout:fixed; font:12px 'JetBrains Mono',monospace; }
@@ -4742,6 +4751,7 @@ body.activity-mode .app-options-button { display:none; }
       const startX = (availableW-cardW-stepX*(cards.length-1))/2;
       cards.forEach((card,index)=>{
         Object.assign(card.style,{width:cardW+'px',height:cardH+'px',left:(startX+index*stepX)+'px',top:((cards.length-1-index)*stepY)+'px',fontSize:Math.max(6.5,Math.min(15,cardW*.22))+'px',zIndex:String(index+1)});
+        if(!card.classList.contains('hand-layout-ready')) requestAnimationFrame(()=>card.classList.add('hand-layout-ready'));
         card.classList.toggle('compact-card',cardH<35);
         const corner = card.firstElementChild;
         const text = card.dataset.rank ? card.dataset.rank+card.dataset.suit : '';
@@ -4767,8 +4777,9 @@ body.activity-mode .app-options-button { display:none; }
         let left,right,bottom;
         if(item.classList.contains('card')){
           const hand = item.parentElement.getBoundingClientRect();
-          left = hand.left+item.offsetLeft;right = left+item.offsetWidth;
-          bottom = hand.top+item.offsetTop+item.offsetHeight;
+          // Use destination geometry while card dimensions are transitioning.
+          left = hand.left+parseFloat(item.style.left);right = left+parseFloat(item.style.width);
+          bottom = hand.top+parseFloat(item.style.top)+parseFloat(item.style.height);
         } else {
           const rect = item.getBoundingClientRect();left=rect.left;right=rect.right;bottom=rect.bottom;
         }
@@ -4782,8 +4793,19 @@ body.activity-mode .app-options-button { display:none; }
     let frame;
     const schedule = ()=>{cancelAnimationFrame(frame);frame = requestAnimationFrame(layoutTableHands);};
     new MutationObserver(schedule).observe(table,{childList:true,subtree:true});
-    new ResizeObserver(schedule).observe(table);
-    window.addEventListener('resize',schedule);
+    // Viewport changes must fit immediately rather than tween from desktop sizes.
+    let resizeFrame;
+    const resize = ()=>{
+      table.classList.add('layout-resizing');
+      schedule();
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(()=>{
+        void table.offsetWidth;
+        resizeFrame = requestAnimationFrame(()=>table.classList.remove('layout-resizing'));
+      });
+    };
+    new ResizeObserver(resize).observe(table);
+    window.addEventListener('resize',resize);
     layoutTableHands();
   }
   function initializeActivityShells(){
