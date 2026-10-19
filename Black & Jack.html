@@ -821,6 +821,35 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
   .row-label, .notes{ display:none !important; }
   .strategy-poster{ box-shadow:none !important; }
 }
+
+/* Focused training layout and navigation */
+.nav-group { position:relative; }
+.nav-group summary { cursor:pointer; padding:12px 16px; color:var(--gold); border-radius:10px; }
+.nav-menu { position:absolute; top:100%; left:0; z-index:100; min-width:200px; padding:8px; background:#181614; border:1px solid #695332; border-radius:12px; box-shadow:0 12px 30px #0008; display:grid; gap:4px; }
+.tabs { overflow:visible; }
+.nav-menu .tab { text-align:left; width:100%; }
+.training-intro { margin-bottom:20px; }
+.training-intro h2 { margin:0 0 8px; font-size:24px; }
+.training-intro p { line-height:1.6; }
+:focus-visible { outline:3px solid #e9c66e; outline-offset:4px; }
+#strategy-panel .deck-tracker summary { cursor:pointer; margin-bottom:10px; color:var(--cream-dim); }
+#strategy-panel .deck-tracker { border-bottom:1px solid #695332; padding-bottom:12px; }
+@media(max-width:600px) {
+  .tabs { flex-wrap:wrap; }
+  .nav-group summary { padding:10px; }
+  .tabs { border-radius:18px; justify-content:space-between; gap:0; }
+  .tabs > .tab { padding:10px; }
+  .training-intro h2 { font-size:21px; }
+  .training-intro p { font-size:14px; margin:8px 0; }
+  .training-intro .notes { display:none; }
+  .nav-menu { position:fixed; top:140px; left:16px; right:16px; max-height:65vh; overflow:auto; }
+  #t-normal-actions button.act { flex:1 1 30%; min-height:46px; font-size:14px; }
+  #table-panel { padding-bottom:160px; }
+  .hero-tagline { display:block; font-size:14px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  *, *::before, *::after { animation:none !important; transition:none !important; scroll-behavior:auto !important; }
+}
 </style>
 </head>
 <body>
@@ -850,18 +879,22 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
         <p>Basic strategy, counting, simulation, and the math behind it</p>
       </div>
     </div>
-    <nav class="tabs">
+    <nav class="tabs" aria-label="Main navigation">
       <button class="tab active" data-tab="home">Home</button>
-      <button class="tab" data-tab="strategy">Basic Strategy</button>
-      <button class="tab" data-tab="counting">Card Counting</button>
-      <button class="tab" data-tab="speedcount">Speed Count</button>
-      <button class="tab" data-tab="cardmath">Card Math</button>
-      <button class="tab" data-tab="simulator">Simulator</button>
-      <button class="tab" data-tab="table">Play Table</button>
-      <button class="tab" data-tab="graveyard">Graveyard</button>
-      <button class="tab" data-tab="cheatsheet">Cheat Sheet</button>
-      <button class="tab" data-tab="rules">Rules</button>
-      <button class="tab" data-tab="math">The Math</button>
+      <details class="nav-group"><summary>Practice</summary><div class="nav-menu">
+        <button class="tab" data-tab="strategy">Basic Strategy</button>
+        <button class="tab" data-tab="cardmath">Hand Totals</button>
+        <button class="tab" data-tab="counting">Card Counting</button>
+        <button class="tab" data-tab="speedcount">Counting Speed</button>
+      </div></details>
+      <button class="tab" data-tab="table">Play</button>
+      <details class="nav-group"><summary>Learn</summary><div class="nav-menu">
+        <button class="tab" data-tab="rules">Blackjack Rules</button>
+        <button class="tab" data-tab="cheatsheet">Strategy Chart</button>
+        <button class="tab" data-tab="math">The Math</button>
+        <button class="tab" data-tab="simulator">Simulator</button>
+        <button class="tab" data-tab="graveyard">Dealt Cards</button>
+      </div></details>
       <button class="tab" data-tab="settings">Settings</button>
     </nav>
   </header>
@@ -922,16 +955,11 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
         <h1 class="hero-title">Black &amp; Jack</h1>
         <p class="hero-tagline">Your blackjack companions. Learn basic strategy, practice card counting, and see the real math behind the game &mdash; all in your browser, nothing sent anywhere.</p>
         <div class="hero-nav">
-          <button class="hero-link" data-goto="strategy">Basic Strategy</button>
-          <button class="hero-link" data-goto="table">Play Table</button>
-          <button class="hero-link" data-goto="counting">Card Counting</button>
-          <button class="hero-link" data-goto="speedcount">Speed Count</button>
-          <button class="hero-link" data-goto="cardmath">Card Math</button>
-          <button class="hero-link" data-goto="cheatsheet">Cheat Sheet</button>
-          <button class="hero-link" data-goto="simulator">Simulator</button>
-          <button class="hero-link" data-goto="rules">Rules</button>
-          <button class="hero-link" data-goto="math">The Math</button>
+          <button class="act primary" id="start-training">Start training →</button>
+          <button class="hero-link" data-goto="table">Play a practice round</button>
+          <button class="hero-link" data-goto="rules">New to blackjack?</button>
         </div>
+        <p class="notes">Start with basic strategy. Build confidence, then explore counting and simulations.</p>
       </div>
     </div>
   </section>
@@ -940,14 +968,15 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
   <section id="strategy-panel" class="panel">
     <div class="grid">
       <div class="felt">
-        <div class="deck-tracker">
+        <div class="training-intro"><h2>Find the best move</h2><p>1. Check the dealer’s upcard. 2. Choose your move. 3. Read the explanation and keep practicing.</p><p class="notes">Keyboard: H hit · S stand · D double · P split · R surrender · N next hand.</p><button class="hero-link" data-goto="settings">Table rules &amp; practice settings</button></div>
+        <details class="deck-tracker"><summary>Shoe details &amp; reshuffle</summary>
           <div class="deck-tracker-top">
             <span class="row-label" style="margin-bottom:0;">Shoe</span>
             <span class="notes" id="bs-deck-text">— / — cards</span>
           </div>
           <div class="deck-bar-outer"><div class="deck-bar-inner" id="bs-deck-bar" style="width:100%"></div><div class="cut-card-marker" style="left:15%"></div><div class="deck-runner deck-runner-black"><svg viewBox="0 0 40 24" width="16" height="12"><ellipse cx="18" cy="15" rx="13" ry="6.5" fill="#181614"/><path d="M28,11 Q37,5 35,15" stroke="#181614" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M6,9 L2,1 L10,7 Z" fill="#181614"/><path d="M11,8 L9,1 L15,7 Z" fill="#181614"/></svg></div><div class="deck-runner deck-runner-jack"><svg viewBox="0 0 40 24" width="16" height="12"><ellipse cx="18" cy="15" rx="13" ry="6.5" fill="#efe9db"/><path d="M28,11 Q37,5 35,15" stroke="#efe9db" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M6,9 L2,1 L10,7 Z" fill="#181614"/><path d="M11,8 L9,1 L15,7 Z" fill="#181614"/></svg></div></div>
           <button class="act" id="btn-reshuffle-bs" style="margin-top:10px;">Reshuffle shoe</button>
-        </div>
+        </details>
         <div id="bs-timer-wrap" style="display:none; margin-bottom:14px;">
           <div class="deck-bar-outer"><div class="deck-bar-inner" id="bs-timer-bar" style="width:100%; background:linear-gradient(90deg, var(--crimson-dim), var(--crimson));"></div></div>
         </div>
@@ -968,12 +997,12 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
           <button class="act" id="btn-split" disabled>Split</button>
           <button class="act" id="btn-surrender" disabled>Surrender</button>
         </div>
-        <div class="feedback info" id="bs-feedback">Deal a hand to begin. Strategy adapts to the table rules above.</div>
+        <div class="feedback info" role="status" aria-live="polite" id="bs-feedback">Deal a hand to begin. Strategy adapts to the table rules above.</div>
         <div id="bs-strategy-visual"></div>
       </div>
       <div class="side">
         <div class="stat-card">
-          <h3>Session stats</h3>
+          <h3>Your progress</h3><button class="hero-link" id="reset-progress">Reset progress</button>
           <div class="stat-line"><span>Decisions</span><span class="stat-num" id="s-total">0</span></div>
           <div class="stat-line"><span>Correct</span><span class="stat-num" id="s-correct">0</span></div>
           <div class="stat-line"><span>Accuracy</span><span class="stat-num" id="s-acc">—</span></div>
@@ -982,13 +1011,13 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
         </div>
         <div class="stat-card">
           <h3>Trouble spots</h3>
-          <div id="bs-trouble-spots"><p class="notes">Miss the same hand twice and it'll show up here.</p></div>
+          <div id="bs-trouble-spots"><p class="notes">Miss a hand and it'll show up here.</p></div>
         </div>
         <div class="stat-card">
-          <h3>Progress this session</h3>
+          <h3>Recent accuracy</h3>
           <div id="bs-progress-chart"><p class="notes">Rolling accuracy will chart here after a few decisions.</p></div>
           <div id="bs-achievements" style="margin-top:10px;"></div>
-          <p class="notes" style="margin-top:10px;">Resets if you reload the page — this trainer doesn't save progress between visits.</p>
+          <p class="notes" style="margin-top:10px;">Progress is saved in this browser when storage is available. It is not shared between devices.</p>
         </div>
         <details class="stat-card details-card">
           <summary><h3>How this works</h3></summary>
@@ -1412,7 +1441,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
           <button class="act primary" id="btn-table-deal">Deal round</button>
         </div>
 
-        <div class="feedback info" id="t-feedback">Click chips to set your bet, then deal a round. Only your hand gets strategy feedback — the AI seats play basic strategy automatically so the count stays realistic.</div>
+        <div class="feedback info" role="status" aria-live="polite" id="t-feedback">Click chips to set your bet, then deal a round. Only your hand gets strategy feedback — the AI seats play basic strategy automatically so the count stays realistic.</div>
         <div id="t-round-summary"></div>
       </div>
 
@@ -1680,12 +1709,12 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
   <!-- ===================== SETTINGS PANEL ===================== -->
   <section id="settings-panel" class="panel">
     <div class="felt">
-      <div class="row-label">Table rules</div>
+      <div class="row-label">Table rules</div><p class="notes">Standard 4–8 deck blackjack, 3:2 payout, dealer checks for blackjack, double on any first two cards, one split per hand, and one card per split Ace. Single- and double-deck strategy is not supported yet. Soft 17 means an Ace counts as 11; late surrender returns half your bet before you play, after the dealer checks for blackjack.</p>
       <p class="notes" id="rules-summary" style="margin-bottom:14px;"></p>
       <div class="settings-row">
         <div class="field">
           <label>Decks</label>
-          <select id="g-decks"><option value="1">1</option><option value="2">2</option><option value="4">4</option><option value="6" selected>6</option><option value="8">8</option></select>
+          <select id="g-decks"><option value="4">4</option><option value="6" selected>6</option><option value="8">8</option></select>
         </div>
         <div class="field">
           <label>Dealer soft 17</label>
@@ -1915,7 +1944,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
       16: {2:'H',3:'H',4:'Dh',5:'Dh',6:'Dh',7:'H',8:'H',9:'H',10:'H',11:'H'},
       17: {2:'H',3:'Dh',4:'Dh',5:'Dh',6:'Dh',7:'H',8:'H',9:'H',10:'H',11:'H'},
       18: {2:'S',3:'Ds',4:'Ds',5:'Ds',6:'Ds',7:'S',8:'S',9:'H',10:'H',11:'H'},
-      19: {2:'S',3:'S',4:'S',5:'S',6:'Ds',7:'S',8:'S',9:'S',10:'S',11:'S'},
+      19: {2:'S',3:'S',4:'S',5:'S',6:'S',7:'S',8:'S',9:'S',10:'S',11:'S'},
       20: {2:'S',3:'S',4:'S',5:'S',6:'S',7:'S',8:'S',9:'S',10:'S',11:'S'}
     };
   }
@@ -1937,12 +1966,17 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     HARD = baseHard();
     SOFT = baseSoft();
     PAIR = basePair(rules.das);
+    if(!rules.das){
+      for(const pair of [2,3]){ PAIR[pair][2] = 'H'; PAIR[pair][3] = 'H'; }
+    }
     if(rules.h17){
-      HARD[11][11] = 'Dh'; // hard 11 vs Ace becomes a double under H17
+      HARD[11][11] = 'Dh';
+      SOFT[18][2] = 'Ds';
+      SOFT[19][6] = 'Ds';
     }
     if(rules.surrender){
       SURRENDER = rules.h17
-        ? { 15:[9,10,11], 16:[8,9,10,11] }
+        ? { 15:[10,11], 16:[9,10,11], 17:[11] }
         : { 15:[10],      16:[9,10,11] };
     } else {
       SURRENDER = {};
@@ -1975,7 +2009,8 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     if(!wrap) return;
 
     const hardDefs = [
-      ['17 or more', ()=> 'S'],
+      ['18 or more', ()=> 'S'],
+      ['17', (dv)=> SURRENDER[17]?.includes(dv) ? 'R' : 'S'],
       ['16', (dv)=> (RULES.surrender && SURRENDER[16] && SURRENDER[16].includes(dv)) ? 'R' : resolveCell(HARD[16][dv], true)],
       ['15', (dv)=> (RULES.surrender && SURRENDER[15] && SURRENDER[15].includes(dv)) ? 'R' : resolveCell(HARD[15][dv], true)],
       ['14', (dv)=> resolveCell(HARD[14][dv], true)],
@@ -1995,7 +2030,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
       ['A,A',  (dv)=> PAIR[11][dv]],
       ['10,10 / faces', ()=> 'S'],
       ['9,9',  (dv)=> PAIR[9][dv]],
-      ['8,8',  (dv)=> PAIR[8][dv]],
+      ['8,8',  (dv)=> correctAction([{rank:'8'},{rank:'8'}],dv,true,true)],
       ['7,7',  (dv)=> PAIR[7][dv]],
       ['6,6',  (dv)=> PAIR[6][dv]],
       ['5,5',  (dv)=> resolveCell(HARD[10][dv], true)],
@@ -2031,10 +2066,11 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     `;
   }
 
-  function correctAction(hand, dealerVal, canDouble, canSplit){
+  function correctAction(hand, dealerVal, canDouble, canSplit, canSurrender = canDouble){
     const isPairHand = hand.length===2 && rankGroup(hand[0].rank)===rankGroup(hand[1].rank);
-    // Surrender check first (dominant when it applies); skip for splittable pairs, where splitting is preferred.
-    if(canDouble && !isPairHand && hand.length===2){
+    // Late surrender precedes play; H17 also surrenders 8,8 against an Ace.
+    if(handValue(hand).total >= 21) return 'S';
+    if(canSurrender && hand.length===2 && (!isPairHand || (hand[0].rank==='8' && RULES.h17 && dealerVal===11))){
       const {total, soft} = handValue(hand);
       if(!soft && SURRENDER[total] && SURRENDER[total].includes(dealerVal)) return 'R';
     }
@@ -2056,11 +2092,20 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
   }
 
   const ACTION_LABEL = {H:'Hit', S:'Stand', D:'Double', P:'Split', R:'Surrender'};
+  function explainDecision(hand, dealer, action){
+    const {total, soft} = handValue(hand);
+    if(action === 'R') return 'Surrender returns half your bet; this matchup is unfavorable enough that giving up half is the preferred play.';
+    if(action === 'P') return hand[0].rank === 'A' ? 'Split Aces to give each Ace a chance to start a stronger hand.' : 'Playing these cards as separate hands is preferred under these table rules.';
+    if(action === 'D') return 'This is a favorable spot to double your wager and take exactly one more card under these table rules.';
+    if(action === 'S') return total >= 17 ? 'Your total is strong enough to stand in this matchup.' : 'The dealer’s low upcard makes standing preferable to risking a bust.';
+    return soft ? 'The Ace can change from 11 to 1, giving you room to improve this hand.' : total <= 11 ? 'You cannot bust on the next card; take a card to improve your total.' : 'The dealer’s upcard makes hitting preferable here, even though you risk busting.';
+  }
+
 
   const DEALER_VALS = [2,3,4,5,6,7,8,9,10,11];
   const DEALER_LABELS = {2:'2',3:'3',4:'4',5:'5',6:'6',7:'7',8:'8',9:'9',10:'10',11:'A'};
 
-  function getHandStrategyInfo(hand, dealerVal, canDouble, canSplit){
+  function getHandStrategyInfo(hand, dealerVal, canDouble, canSplit, canSurrender = canDouble){
     const isPairHand = canSplit && hand.length===2 && rankGroup(hand[0].rank)===rankGroup(hand[1].rank);
     let label, getCell;
 
@@ -2092,6 +2137,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
         };
       }
     }
+    getCell = (dv)=> correctAction(hand, dv, canDouble, canSplit, canSurrender);
     return {label, getCell};
   }
 
@@ -2120,8 +2166,8 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     </div>`;
   }
 
-  function buildHandPosterHTML(hand, dealerVal, canDouble, canSplit){
-    const {label, getCell} = getHandStrategyInfo(hand, dealerVal, canDouble, canSplit);
+  function buildHandPosterHTML(hand, dealerVal, canDouble, canSplit, canSurrender = canDouble){
+    const {label, getCell} = getHandStrategyInfo(hand, dealerVal, canDouble, canSplit, canSurrender);
     const rows = DEALER_VALS.map(dv=>{
       const act = getCell(dv);
       const current = dv === dealerVal ? ' current-row' : '';
@@ -2157,6 +2203,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     newHand();
     tableResetShoe();
     tableRoundActive = false;
+    setRoundControlsLocked(false);
     disableAllUserButtons();
     document.getElementById('btn-table-deal').disabled = false;
     syncMobileDealBar();
@@ -2178,7 +2225,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
   document.getElementById('g-surrender').addEventListener('change', e=>{ RULES.surrender = (e.target.value==='yes'); buildTables(RULES); refreshRulesSummary(); updateButtons(); });
 
   // ---------------- Basic Strategy panel ----------------
-  let dealerCard = null, playerHand = [], canDouble = true, canSplit = true;
+  let dealerCard = null, playerHand = [], canDouble = true, canSplit = true, bsDecisionActive = false;
   let stats = {total:0, correct:0, streak:0, best:0};
   let bsShoe = [], bsShoeTotal = 0;
   let bsTimerInterval = null, bsTimeLeft = 0;
@@ -2245,11 +2292,12 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
 
   function updateButtons(){
     const bust = handValue(playerHand).total > 21;
-    btnHit.disabled = bust;
-    btnStand.disabled = bust;
-    btnDouble.disabled = !canDouble || bust;
-    btnSplit.disabled = !canSplit || bust;
-    btnSurrender.disabled = !canDouble || bust || !RULES.surrender;
+    const inactive = !bsDecisionActive || bust || handValue(playerHand).total >= 21;
+    btnHit.disabled = inactive;
+    btnStand.disabled = inactive;
+    btnDouble.disabled = !canDouble || inactive;
+    btnSplit.disabled = !canSplit || inactive;
+    btnSurrender.disabled = !canDouble || inactive || !RULES.surrender;
   }
 
   function updateStats(){
@@ -2287,11 +2335,11 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
       .slice(0,5);
     const wrap = document.getElementById('bs-trouble-spots');
     if(entries.length === 0){
-      wrap.innerHTML = '<p class="notes">Miss the same hand twice and it\'ll show up here.</p>';
+      wrap.innerHTML = '<p class="notes">Miss a hand and it\'ll show up here.</p>';
       return;
     }
     wrap.innerHTML = entries.map(([label,v])=>
-      `<div class="stat-line"><span>${label}</span><span class="stat-num">${v.wrong}/${v.total} missed</span></div>`
+      `<div class="stat-line"><span>${escapeHTML(label)}</span><span class="stat-num">${v.wrong}/${v.total} missed</span></div>`
     ).join('');
   }
 
@@ -2299,6 +2347,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     progressHistory.push(wasCorrect ? 1 : 0);
     if(progressHistory.length > 60) progressHistory.shift();
     renderProgressChart();
+    saveProgress();
   }
   function renderProgressChart(){
     const wrap = document.getElementById('bs-progress-chart');
@@ -2369,10 +2418,17 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
   }
 
   function beginDecisionPhase(){
+    bsDecisionActive = true;
     document.getElementById('bs-insurance-actions').style.display = 'none';
     document.getElementById('bs-normal-actions').style.display = 'flex';
     updateButtons();
     bsFeedback.className = 'feedback info';
+    if(handValue(playerHand).total === 21){
+      bsDecisionActive = false;
+      bsFeedback.textContent = 'Blackjack! No decision needed. Deal the next hand.';
+      updateButtons();
+      return;
+    }
     bsFeedback.textContent = 'Choose an action for your hand.';
     startBsTimer();
   }
@@ -2388,7 +2444,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     btnNewHand.disabled = false;
     dealerCard = bsDrawCard();
     playerHand = [bsDrawCard(), bsDrawCard()];
-    canDouble = true; canSplit = true;
+    canDouble = true; canSplit = rankGroup(playerHand[0].rank) === rankGroup(playerHand[1].rank);
     renderHands();
     document.getElementById('bs-strategy-visual').innerHTML = '';
 
@@ -2416,10 +2472,13 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     }
     updateStats();
     recordProgressPoint(correct);
+    const insuranceFeedback = bsFeedback.textContent;
     beginDecisionPhase();
+    bsFeedback.textContent = insuranceFeedback + ' ' + bsFeedback.textContent;
   }
 
   function judge(action){
+    if(!bsDecisionActive) return;
     const isTimeout = (action === '__timeout__');
     const bust = handValue(playerHand).total > 21;
     if(bust) return;
@@ -2441,6 +2500,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
         ? `⏱ Too slow — strategy says ${ACTION_LABEL[best]}.`
         : `✗ Not quite — strategy says ${ACTION_LABEL[best]}, you chose ${ACTION_LABEL[action]}.`;
     }
+    bsFeedback.textContent += ' ' + explainDecision(handSnapshot, dealerValSnap, best);
     updateStats();
     recordTroubleSpot(describeHandForTracking(handSnapshot, dealerValSnap, canSplitSnap), !isRight);
     recordProgressPoint(isRight);
@@ -2450,13 +2510,15 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
       playerHand.push(bsDrawCard());
       canDouble = false; canSplit = false;
       renderHands(); updateButtons();
-      if(handValue(playerHand).total > 21){
-        bsFeedback.textContent += ' Bust — deal a new hand to continue.';
+      if(handValue(playerHand).total >= 21){
+        bsDecisionActive = false;
+        bsFeedback.textContent += handValue(playerHand).total > 21 ? ' Bust — deal a new hand to continue.' : ' You reached 21 — deal a new hand.';
         clearBsTimer();
       } else {
         startBsTimer();
       }
     } else {
+      bsDecisionActive = false;
       clearBsTimer();
       updateButtons();
       btnHit.disabled = true; btnStand.disabled = true; btnDouble.disabled = true; btnSplit.disabled = true; btnSurrender.disabled = true;
@@ -2487,15 +2549,27 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     bsFeedback.textContent = 'Shoe reshuffled. Deal a new hand whenever you\'re ready.';
   });
 
+  document.getElementById('start-training').addEventListener('click', ()=>{ activateTab('strategy'); });
+  document.addEventListener('keydown', e=>{
+    if(!e.repeat && !e.ctrlKey && !e.metaKey && !e.altKey && !e.target.closest('input, select, textarea, button, summary, [contenteditable]') && document.getElementById('strategy-panel').classList.contains('active')){
+      const actions = {h:btnHit,s:btnStand,d:btnDouble,p:btnSplit,r:btnSurrender,n:btnNewHand};
+      const button = actions[e.key.toLowerCase()];
+      if(button && !button.disabled){ e.preventDefault(); button.click(); }
+    }
+    if(e.key === 'Escape') document.querySelectorAll('.nav-group').forEach(el=>{ el.open = false; });
+  });
   // ---------------- Tabs ----------------
   function activateTab(tabName){
+    document.querySelectorAll('.nav-group').forEach(el=>{ el.open = false; });
+    document.querySelectorAll('.tab').forEach(el=>el.removeAttribute('aria-current'));
+    document.querySelectorAll('.panel').forEach(el=>{ el.inert = true; });
     document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
     document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
     const btn = document.querySelector(`.tab[data-tab="${tabName}"]`);
-    if(btn) btn.classList.add('active');
+    if(btn){ btn.classList.add('active'); btn.setAttribute('aria-current','page'); }
     const panel = document.getElementById(tabName + '-panel');
-    if(panel) panel.classList.add('active');
-    window.scrollTo({top:0, behavior:'smooth'});
+    if(panel){ panel.classList.add('active'); panel.inert = false; panel.setAttribute('tabindex','-1'); panel.focus({preventScroll:true}); }
+    window.scrollTo({top:0, behavior:'instant'});
   }
   document.querySelectorAll('.tab').forEach(btn=>{
     btn.addEventListener('click', ()=>activateTab(btn.dataset.tab));
@@ -2925,8 +2999,8 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
 
   function naiveAction(cards){ return handValue(cards).total < 17 ? 'H' : 'S'; }
 
-  function playHand(cards, dealerUpVal, rules, state, systemKey, canDoubleNow, canSplitNow, strategyType, graveyard){
-    const action = strategyType==='basic' ? correctAction(cards, dealerUpVal, canDoubleNow, canSplitNow) : naiveAction(cards);
+  function playHand(cards, dealerUpVal, rules, state, systemKey, canDoubleNow, canSplitNow, strategyType, graveyard, canSurrender = true){
+    const action = strategyType==='basic' ? correctAction(cards, dealerUpVal, canDoubleNow, canSplitNow, canSurrender && canDoubleNow) : naiveAction(cards);
     if(action==='R' && canDoubleNow) return [{cards, bet:1, surrendered:true, busted:false}];
     if(action==='P' && canSplitNow){
       const isAceSplit = cards[0].rank === 'A';
@@ -2938,8 +3012,8 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
           {cards:c2, bet:1, busted:handValue(c2).total>21}
         ];
       }
-      const r1 = playHand(c1, dealerUpVal, rules, state, systemKey, rules.das, false, strategyType, graveyard);
-      const r2 = playHand(c2, dealerUpVal, rules, state, systemKey, rules.das, false, strategyType, graveyard);
+      const r1 = playHand(c1, dealerUpVal, rules, state, systemKey, rules.das, false, strategyType, graveyard, false);
+      const r2 = playHand(c2, dealerUpVal, rules, state, systemKey, rules.das, false, strategyType, graveyard, false);
       return r1.concat(r2);
     }
     if(action==='D' && canDoubleNow){
@@ -2949,7 +3023,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     if(action==='H'){
       cards.push(drawCard(state, systemKey, graveyard));
       if(handValue(cards).total > 21) return [{cards, bet:1, busted:true}];
-      return playHand(cards, dealerUpVal, rules, state, systemKey, false, false, strategyType, graveyard);
+      return playHand(cards, dealerUpVal, rules, state, systemKey, false, false, strategyType, graveyard, false);
     }
     return [{cards, bet:1, busted:false}];
   }
@@ -3072,7 +3146,6 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
         totalWagered += r.wagered * baseBet;
         totalNet += r.net * baseBet;
         counts[r.outcome] = (counts[r.outcome]||0) + 1;
-        if(r.blackjack) counts.blackjack++;
         counts.bust += r.busts; counts.surrender += r.surrenders;
         if(i % sampleEvery === 0) series.push(bankroll);
 
@@ -3270,7 +3343,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     const canD = canDoubleOverride !== undefined ? canDoubleOverride : tableUserCanDouble;
     const canS = canSplitOverride !== undefined ? canSplitOverride : tableUserCanSplit;
     document.getElementById('t-strategy-guide').innerHTML =
-      buildHandPosterHTML(hand, dealerUpVal, canD, canS);
+      buildHandPosterHTML(hand, dealerUpVal, canD, canS, !tableSplitHands && canD);
   }
   function clearTableStrategyGuide(){
     tableCurrentDealerUpVal = null;
@@ -3495,6 +3568,10 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     document.getElementById('t-btn-split').disabled = !tableUserCanSplit || bust || !tableRoundActive;
     document.getElementById('t-btn-surrender').disabled = !tableUserCanDouble || bust || !tableRoundActive || !RULES.surrender;
   }
+  function setRoundControlsLocked(locked){
+    document.querySelectorAll('#settings-panel select, .chip, #btn-clear-bet, #btn-table-reshuffle, #btn-table-reset-bankroll, #t-show-strategy, #t-system').forEach(el=>{ el.disabled = locked; });
+  }
+
   function disableAllUserButtons(){
     ['t-btn-hit','t-btn-stand','t-btn-double','t-btn-split','t-btn-surrender'].forEach(id=>{ document.getElementById(id).disabled = true; });
   }
@@ -3554,6 +3631,8 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
       document.getElementById('t-feedback').textContent = 'Click some chips to place a bet first.';
       return;
     }
+    tableRoundActive = true;
+    setRoundControlsLocked(true);
     document.getElementById('t-round-summary').innerHTML = '';
     clearBanners();
     clearTableStrategyGuide();
@@ -3677,7 +3756,16 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     document.getElementById('t-feedback').textContent = 'Your turn — choose an action.';
   }
 
+  let tableActionBusy = false;
   async function tableJudgeUser(action){
+    if(tableActionBusy) return;
+    tableActionBusy = true;
+    disableAllUserButtons();
+    try { await performTableAction(action); }
+    finally { tableActionBusy = false; updateTableUserButtons(); }
+  }
+
+  async function performTableAction(action){
     if(!tableRoundActive) return;
     if(tableSplitHands){ await tableJudgeSplitHand(action); return; }
     const bust = handValue(tableUserCards).total > 21;
@@ -3698,6 +3786,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
       document.getElementById('t-feedback').className = 'feedback wrong';
       document.getElementById('t-feedback').textContent = `✗ Not quite — strategy says ${ACTION_LABEL[best]}, you chose ${ACTION_LABEL[action]}.`;
     }
+    document.getElementById('t-feedback').textContent += ' ' + explainDecision(handSnapshot, dealerUpVal, best);
     catReactToDecision(isRight);
     renderTableStats();
 
@@ -3782,7 +3871,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     const handSnapshot = hand.cards.slice();
     const canD = hand.canDouble;
 
-    const best = correctAction(handSnapshot, dealerUpVal, canD, false);
+    const best = correctAction(handSnapshot, dealerUpVal, canD, false, false);
     const isRight = (action === best);
     tableSessionStats.total++;
     if(isRight){
@@ -3793,6 +3882,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
       document.getElementById('t-feedback').className = 'feedback wrong';
       document.getElementById('t-feedback').textContent = `✗ Not quite — strategy says ${ACTION_LABEL[best]}, you chose ${ACTION_LABEL[action]}.`;
     }
+    document.getElementById('t-feedback').textContent += ' ' + explainDecision(handSnapshot, dealerUpVal, best);
     catReactToDecision(isRight);
     renderTableStats();
 
@@ -3916,6 +4006,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     document.getElementById('t-round-summary').innerHTML = summaryHTML;
 
     tableRoundActive = false;
+    setRoundControlsLocked(false);
     disableAllUserButtons();
     document.getElementById('btn-table-deal').disabled = false;
 
@@ -3931,6 +4022,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
   document.getElementById('btn-table-reshuffle').addEventListener('click', ()=>{
     tableResetShoe();
     tableRoundActive = false;
+    setRoundControlsLocked(false);
     disableAllUserButtons();
     document.getElementById('btn-table-deal').disabled = false;
     syncMobileDealBar();
@@ -3998,7 +4090,35 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     });
   }
 
+  function escapeHTML(value){ return String(value).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function saveProgress(){
+    try { localStorage.setItem('blackjack-progress-v1', JSON.stringify({stats, troubleSpots, progressHistory, unlockedAchievements})); } catch { /* Practice works with storage disabled. */ }
+  }
+  document.getElementById('reset-progress').addEventListener('click', ()=>{
+    stats = {total:0,correct:0,streak:0,best:0}; troubleSpots = {}; progressHistory = []; unlockedAchievements = {};
+    saveProgress(); updateStats(); renderTroubleSpots(); renderProgressChart();
+  });
+  function restoreProgress(){
+    try {
+      const data = JSON.parse(localStorage.getItem('blackjack-progress-v1'));
+      if(!data || !['total','correct','streak','best'].every(key=>Number.isSafeInteger(data.stats?.[key]) && data.stats[key]>=0) || data.stats.correct>data.stats.total) return;
+      stats = data.stats;
+      troubleSpots = Object.fromEntries(Object.entries(data.troubleSpots || {}).filter(([key,v])=>key.length<100 && Number.isSafeInteger(v?.wrong) && Number.isSafeInteger(v?.total) && v.wrong>=0 && v.total>=v.wrong));
+      progressHistory = Array.isArray(data.progressHistory) ? data.progressHistory.filter(v=>v===0 || v===1).slice(-60) : [];
+      unlockedAchievements = Object.fromEntries(ACHIEVEMENT_DEFS.filter(a=>data.unlockedAchievements?.[a.id]===true).map(a=>[a.id,true]));
+    } catch { /* Ignore malformed or unavailable browser storage. */ }
+  }
   // ---------------- init ----------------
+  restoreProgress();
+  renderTroubleSpots();
+  renderProgressChart();
+  document.querySelectorAll('.field').forEach(field=>{
+    const control = field.querySelector('select[id], input[id]');
+    const label = field.querySelector('label');
+    if(control && label) label.htmlFor = control.id;
+  });
+  document.querySelectorAll('.panel:not(.active)').forEach(panel=>{ panel.inert = true; });
+
   buildTables(RULES);
   refreshRulesSummary();
   bsResetShoe();
