@@ -8,7 +8,7 @@ const assert=require('node:assert/strict');
  const page=await browser.newPage({viewport:{width:1440,height:1100},reducedMotion:'reduce'});
  const errors=[]; page.on('pageerror',e=>errors.push(e.message));
  // Test-only hooks set a known shoe and remove delays; the shipped HTML exposes no hooks.
- const html=fs.readFileSync(path.join(__dirname,'../Black & Jack.html'),'utf8').replace('  // ---------------- init ----------------', `
+ const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8').replace('  // ---------------- init ----------------', `
  window.seatingTest = {
    prepare(ranks){
      const cards = ranks.concat(Array(100).fill('10')).map(rank=>({rank,suit:'♠',red:false}));

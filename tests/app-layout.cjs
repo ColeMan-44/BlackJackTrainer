@@ -7,7 +7,7 @@ const assert=require('node:assert/strict');
  try{
  const page=await browser.newPage({viewport:{width:375,height:667},reducedMotion:'reduce'});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.route('http://blackjack.test/**',r=>r.fulfill({contentType:'text/html',body:fs.readFileSync(path.join(__dirname,'../Black & Jack.html'),'utf8')}));
+ await page.route('http://blackjack.test/**',r=>r.fulfill({contentType:'text/html',body:fs.readFileSync(path.join(__dirname,'../index.html'),'utf8')}));
  await page.goto('http://blackjack.test/');
  async function activity(id){
   if(id==='table') await page.locator('[data-tab="table"]').click();

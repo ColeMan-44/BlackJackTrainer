@@ -8,7 +8,7 @@ const assert=require('node:assert/strict');
  for(const motion of ['reduce','no-preference']){
  const page=await browser.newPage({viewport:{width:375,height:667},reducedMotion:motion});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
- const html=fs.readFileSync(path.join(__dirname,'../Black & Jack.html'),'utf8').replace('  // ---------------- init ----------------',`
+ const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8').replace('  // ---------------- init ----------------',`
  window.resultTest={prepare(ranks){
   tableShoeState={cards:ranks.concat(Array(100).fill('10')).map(rank=>({rank,suit:'♠',red:false})).reverse(),runningCount:0,dealt:0,totalDecks:6};
   tableGraveyard=[];tableDiscardCount=0;updateDiscardTray();updateTableDeckVisual();

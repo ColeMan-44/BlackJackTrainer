@@ -7,7 +7,7 @@ const assert=require('node:assert/strict');
  try {
  const page=await browser.newPage({viewport:{width:1280,height:1000},reducedMotion:'reduce'});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
- const html=fs.readFileSync(path.join(__dirname,'../Black & Jack.html'),'utf8').replace('  // ---------------- init ----------------', `
+ const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8').replace('  // ---------------- init ----------------', `
  window.aidTest = { prepare(){
   const ranks=['8','6','8','10','3','2','10','7',...Array(100).fill('10')];
   tableShoeState={cards:ranks.map(rank=>({rank,suit:'♠',red:false})).reverse(),runningCount:0,dealt:0,totalDecks:6};

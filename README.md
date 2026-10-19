@@ -1,6 +1,6 @@
 # Black & Jack
 
-A browser blackjack trainer with basic strategy, counting drills, practice play, and simulations. Open **Black & Jack.html** directly, or serve the folder with `python3 -m http.server 8000` and select the HTML file. No application server or build step is required. Fonts load from Google Fonts, with local font fallbacks.
+A browser blackjack trainer with basic strategy, counting drills, practice play, and simulations. Play at https://coleman-44.github.io/BlackJackTrainer/. To run locally, open **index.html** directly, or serve the folder with `python3 -m http.server 8000` and open http://localhost:8000/. No application server or build step is required. Fonts load from Google Fonts, with local font fallbacks.
 
 ## Supported rules
 

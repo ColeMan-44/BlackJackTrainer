@@ -7,7 +7,7 @@ const assert=require('node:assert/strict');
  try{
  const page=await browser.newPage({viewport:{width:375,height:667},reducedMotion:'reduce'});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
- const html=fs.readFileSync(path.join(__dirname,'../Black & Jack.html'),'utf8').replace('  // ---------------- init ----------------',`
+ const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8').replace('  // ---------------- init ----------------',`
  window.handTest={preview(count,split=false,short=false){
   document.getElementById('t-ai-count').value=String(count);buildAISeats(count);
   const cards=(short?['A','7']:['A','A','2','2','2','2','2','2']).map(rank=>({rank,suit:'♠',red:false}));

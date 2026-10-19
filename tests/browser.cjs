@@ -5,7 +5,7 @@ const assert=require('node:assert/strict');
 const browser=await chromium.launch({...(process.env.CHROMIUM_PATH ? {executablePath:process.env.CHROMIUM_PATH} : {}),args:['--no-sandbox']});
 const page=await browser.newPage({viewport:{width:1280,height:900}});
 const errors=[];page.on('pageerror',e=>errors.push(e.message));
-let html=fs.readFileSync(require('node:path').join(__dirname,'../Black & Jack.html'),'utf8');
+let html=fs.readFileSync(require('node:path').join(__dirname,'../index.html'),'utf8');
 // Observe round results without changing settlement or aggregate counting logic.
 html=html.replace('const r = simulateOneRound(RULES, systemKey, betUnits, state, strategyType);', 'const r = simulateOneRound(RULES, systemKey, betUnits, state, strategyType); window.__observedBlackjacks = (window.__observedBlackjacks || 0) + Number(r.blackjack);');
 await page.route('http://blackjack.test/**',r=>r.fulfill({contentType:'text/html',body:html}));

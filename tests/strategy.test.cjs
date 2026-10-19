@@ -2,7 +2,7 @@ const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-const source = fs.readFileSync(require('node:path').join(__dirname,'../Black & Jack.html'),'utf8');
+const source = fs.readFileSync(require('node:path').join(__dirname,'../index.html'),'utf8');
 function extract(name){
   const start = source.indexOf(`  function ${name}(`);
   assert.notEqual(start,-1,name);
