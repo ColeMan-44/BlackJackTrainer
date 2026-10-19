@@ -8,9 +8,9 @@ const assert=require('node:assert/strict');
  const page=await browser.newPage({viewport:{width:375,height:667},reducedMotion:'reduce'});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  const html=fs.readFileSync(path.join(__dirname,'../Black & Jack.html'),'utf8').replace('  // ---------------- init ----------------',`
- window.handTest={preview(count,split=false){
+ window.handTest={preview(count,split=false,short=false){
   document.getElementById('t-ai-count').value=String(count);buildAISeats(count);
-  const cards=['A','A','2','2','2','2','2','2'].map(rank=>({rank,suit:'♠',red:false}));
+  const cards=(short?['A','7']:['A','A','2','2','2','2','2','2']).map(rank=>({rank,suit:'♠',red:false}));
   tableUserCards=cards;tableSplitHands=null;
   tableAIResultsForRound=Array.from({length:count},()=>[{cards:cards.slice(),bet:1,busted:false}]);
   updateAISeatsFromResults(tableAIResultsForRound);
@@ -42,17 +42,26 @@ const assert=require('node:assert/strict');
     return {screenFits:screen.scrollHeight<=screen.clientHeight+1 && screen.scrollWidth<=screen.clientWidth+1,seatsFit:seats.scrollWidth<=seats.clientWidth+1,
      cardsFit:hands.every(hand=>{const h=hand.getBoundingClientRect();return [...hand.children].filter(c=>c.classList.contains('card')).every(c=>{const r=c.getBoundingClientRect();return r.left>=h.left-1 && r.right<=h.right+1 && r.top>=h.top-1 && r.bottom<=h.bottom+1 && r.left>=table.left-1 && r.right<=table.right+1 && r.top>=table.top-1 && r.bottom<=table.bottom+1 && r.bottom<=Math.min(railBottom(r.left),railBottom(r.right))+1;});}),
      labelsFit:[...document.querySelectorAll('#t-seats-row .result-banner.show')].every(label=>{const r=label.getBoundingClientRect();return r.bottom<=Math.min(railBottom(r.left),railBottom(r.right))+1;}),
+     newestOnTop:hands.every(hand=>{const cards=[...hand.children].filter(c=>c.classList.contains('card'));return cards.every((card,index)=>index===0 || Number(card.style.zIndex)>Number(cards[index-1].style.zIndex));}),
      stepped:hands.every(hand=>{const cards=[...hand.children].filter(c=>c.classList.contains('card'));return cards.length<2 || cards.at(-1).getBoundingClientRect().top<cards[0].getBoundingClientRect().top;})};
    });
    assert.ok(geometry.screenFits,`screen fits ${count+1} seats at ${width}x${height}`);
    assert.ok(geometry.seatsFit,'no seat-strip side scrolling');
    assert.ok(geometry.cardsFit,`eight-card hands stay inside the table (${count+1} seats, ${width}x${height})`);
    assert.ok(geometry.stepped,'cards step upward');
+   assert.ok(geometry.newestOnTop,'new cards overlap above earlier cards');
    assert.ok(geometry.labelsFit,'results stay within the curved rail');
    if(count===6 && width===375) await page.screenshot({path:'/tmp/stepped-seats-phone.png',animations:'disabled'});
    if(count===6 && width===1440) await page.screenshot({path:'/tmp/stepped-seats-desktop.png',animations:'disabled'});
   }
  }
+ await page.setViewportSize({width:1440,height:900});
+ await page.evaluate(()=>window.handTest.preview(0,false,true));
+ await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+ const pair=await page.locator('#t-user-row > .card').evaluateAll(cards=>cards.map(c=>({height:c.getBoundingClientRect().height,left:c.getBoundingClientRect().left,z:Number(c.style.zIndex)})));
+ assert.ok(pair[0].height>76,'ordinary hands use larger cards than the previous 76px cap');
+ assert.ok(pair[1].left-pair[0].left>7,'ordinary hands have wider spacing than the previous 7px cap');
+ assert.ok(pair[1].z>pair[0].z,'newest card is drawn over the previous card');
  await page.setViewportSize({width:375,height:667});
  await page.evaluate(()=>{window.handTest.preview(2,true);window.handTest.expose();});
  await page.locator('#table-panel .activity-stats-button').click();

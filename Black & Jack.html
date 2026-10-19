@@ -1275,6 +1275,17 @@ body.activity-mode .app-options-button { display:none; }
 #table-panel .activity-screen .compact-card > .suit-big,
 #table-panel .activity-screen .compact-card > span:last-child { display:none; }
 #table-panel .activity-screen .stepped-hand > .card > span:first-child { white-space:nowrap; font-size:inherit; line-height:1; }
+
+/* New cards sit on top; exposed lower corners identify earlier cards in the stack. */
+#table-panel .activity-screen #casino-table .stepped-hand > .card { box-shadow:0 2px 4px #0004; }
+#table-panel .activity-screen #casino-table .stepped-hand > .card:not(.back) { border:1px solid #d6d0c3; }
+#table-panel .activity-screen #casino-table .stepped-hand > .card > span:last-child {
+ display:block; position:absolute; left:3px; bottom:2px; font-size:inherit; line-height:1; white-space:nowrap;
+}
+
+#table-panel .activity-screen #casino-table .stepped-hand > .card > .suit-big {
+ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); line-height:1;
+}
 </style>
 </head>
 <body>
@@ -4705,17 +4716,20 @@ body.activity-mode .app-options-button { display:none; }
       hand.classList.toggle('stepped-hand',cards.length>0);
       if(!cards.length || !hand.clientWidth || !hand.clientHeight) continue;
       const availableW = hand.clientWidth, availableH = hand.clientHeight;
-      const cardH = Math.max(18,Math.min(76,availableH*(cards.length>1?.7:1),availableW*1.36));
+      const preferredGap = 14;
+      const cardH = Math.min(availableH*(cards.length>1?.86:1),Math.max(18,Math.min(104,Math.max(30,availableH-preferredGap*(cards.length-1)),availableW*1.36)));
       const cardW = cardH/1.4;
-      const stepX = cards.length>1 ? Math.min(7,Math.max(0,(availableW-cardW)/(cards.length-1))) : 0;
-      const stepY = cards.length>1 ? Math.min(16,(availableH-cardH)/(cards.length-1)) : 0;
+      const stepX = cards.length>1 ? Math.min(18,Math.max(0,(availableW-cardW)/(cards.length-1))) : 0;
+      const stepY = cards.length>1 ? Math.min(22,(availableH-cardH)/(cards.length-1)) : 0;
       const startX = (availableW-cardW-stepX*(cards.length-1))/2;
       cards.forEach((card,index)=>{
-        Object.assign(card.style,{width:cardW+'px',height:cardH+'px',left:(startX+index*stepX)+'px',top:((cards.length-1-index)*stepY)+'px',fontSize:Math.max(7,Math.min(12,cardW*.24))+'px',zIndex:String(cards.length-index)});
+        Object.assign(card.style,{width:cardW+'px',height:cardH+'px',left:(startX+index*stepX)+'px',top:((cards.length-1-index)*stepY)+'px',fontSize:Math.max(6.5,Math.min(15,cardW*.22))+'px',zIndex:String(index+1)});
         card.classList.toggle('compact-card',cardH<35);
         const corner = card.firstElementChild;
         const text = card.dataset.rank ? card.dataset.rank+card.dataset.suit : '';
         if(corner && text && corner.textContent!==text) corner.textContent = text;
+        const lowerCorner = card.lastElementChild;
+        if(lowerCorner && text && lowerCorner.textContent!==text) lowerCorner.textContent = text;
         card.setAttribute('aria-label',card.classList.contains('back')?'Face-down card':text);
         const suit = card.querySelector('.suit-big');if(suit) suit.style.fontSize = Math.max(10,cardH*.26)+'px';
       });

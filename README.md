@@ -24,7 +24,7 @@ The normal portrait game and drill layouts fit the tested phone viewports, inclu
 
 ## Player seating
 
-In **Play → Options → Table setup**, choose the number of AI players and **Your seat / turn order**. Seat 1 is the rightmost seat and acts first by default. Both cards and turns proceed right to left, with the dealer playing last. Choosing a middle or last seat makes the AI players before you finish before your turn; the remaining players wait until you finish. Seat changes are available between rounds. Hands use overlapping cards stepped upward, with no side scrolling for extra cards. All seats fit the felt; phones use two rows for five to seven players. Action controls stay outside the felt.
+In **Play → Options → Table setup**, choose the number of AI players and **Your seat / turn order**. Seat 1 is the rightmost seat and acts first by default. Both cards and turns proceed right to left, with the dealer playing last. Choosing a middle or last seat makes the AI players before you finish before your turn; the remaining players wait until you finish. Seat changes are available between rounds. Hands use larger, spaced cards stepped upward, with newer cards on top and rank/suit labels on exposed lower corners. Extra cards stay within the hand area without side scrolling. All seats fit the felt; phones use two rows for five to seven players. Action controls stay outside the felt.
 
 ## Validation
 
