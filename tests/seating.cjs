@@ -21,7 +21,7 @@ const assert=require('node:assert/strict');
  // ---------------- init ----------------`);
  await page.route('http://blackjack.test/**',r=>r.fulfill({contentType:'text/html',body:html}));
  await page.goto('http://blackjack.test/');
- await page.locator('[data-tab="settings"]').click();
+ await page.locator('[data-tab="table"]').click();
  await page.locator('#t-ai-count').selectOption('2');
  for(const position of [0,1,2]){
    await page.locator('#t-user-position').selectOption(String(position));
@@ -54,7 +54,7 @@ const assert=require('node:assert/strict');
    assert.deepEqual(after.ai,[['2','2','10','10'],['3','3','10','2']]);
    assert.equal(after.count,3,'count includes all exposed cards exactly once');
    assert.equal(await page.locator('#t-user-position').isEnabled(),true);
-   await page.locator('[data-tab="settings"]').click();
+   await page.locator('[data-tab="table"]').click();
  }
  // Seven players stay in one scrollable row at phone and desktop sizes.
  await page.locator('#t-ai-count').selectOption('6');
@@ -68,7 +68,7 @@ const assert=require('node:assert/strict');
    if(width<=375) assert.ok(geometry.scrollable,'phone seat strip scrolls');
    if(width===375) await page.screenshot({path:'/tmp/seating-mobile.png',fullPage:true,animations:'disabled'});
  }
- await page.locator('[data-tab="settings"]').click();
+ await page.locator('[data-tab="table"]').click();
  await page.locator('#t-ai-count').selectOption('1');
  assert.equal(await page.locator('#t-user-position').inputValue(),'1','seat clamps when players are removed');
  assert.deepEqual(errors,[]);

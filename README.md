@@ -8,9 +8,13 @@ A browser blackjack trainer with basic strategy, counting drills, practice play,
 
 Use **Start training** for the basic strategy drill. The drill tests decisions; **Play** runs complete rounds. Progress is stored in this browser when browser storage is available. Use **Reset progress** to clear it. Keyboard shortcuts while the training panel has focus: H hit, S stand, D double, P split, R surrender, N next hand. Controls retain normal keyboard behavior when focused.
 
+## Activity options
+
+Each activity has its options at the top of its own tab: Basic Strategy (timer and insurance), Card Counting (system, speed, drill length), Counting Speed (system, cards per round, running total), Hand Totals (total visibility), and Play (players, seat, count system, count visibility, shoe visibility). Shared table rules and sound remain in Settings. Changing Card Counting options resets that drill so the new selection applies on its next start.
+
 ## Player seating
 
-In **Settings → Play Table**, choose the number of AI players and **Your seat / turn order**. Seat 1 is the rightmost seat and acts first by default. Both cards and turns proceed right to left, with the dealer playing last. Choosing a middle or last seat makes the AI players before you finish before your turn; the remaining players wait until you finish. Seat changes are available between rounds. On phones, swipe the seat strip horizontally; action controls stay outside the strip.
+In **Play → Table setup**, choose the number of AI players and **Your seat / turn order**. Seat 1 is the rightmost seat and acts first by default. Both cards and turns proceed right to left, with the dealer playing last. Choosing a middle or last seat makes the AI players before you finish before your turn; the remaining players wait until you finish. Seat changes are available between rounds. On phones, swipe the seat strip horizontally; action controls stay outside the strip.
 
 ## Validation
 
