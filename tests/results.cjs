@@ -47,9 +47,10 @@ const assert=require('node:assert/strict');
  assert.match(await page.locator('#t-user-banner').getAttribute('class'),/win/);
  for(const [width,height] of [[1280,800],[375,667],[320,568]]){
   await page.setViewportSize({width,height});
+  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
   const geometry=await page.locator('#table-panel .activity-screen').evaluate(e=>({h:e.clientHeight,s:e.scrollHeight,w:e.clientWidth,sw:e.scrollWidth}));
   assert.ok(geometry.s<=geometry.h+1,`settled split fits ${width}x${height}`);
-  assert.ok(geometry.sw<=geometry.w+1);
+  assert.ok(geometry.sw<=geometry.w+1,`horizontal fit at ${width}x${height}: ${JSON.stringify(geometry)}`);
   const resultPosition=await page.locator('#t-user-banner').evaluate(e=>({bottom:e.getBoundingClientRect().bottom,top:e.getBoundingClientRect().top,cardsBottom:document.getElementById('t-user-row').getBoundingClientRect().bottom,seatsBottom:document.getElementById('t-seats-row').getBoundingClientRect().bottom}));
   assert.ok(resultPosition.top>=resultPosition.cardsBottom,'split result stays below cards');
   assert.ok(resultPosition.bottom<=resultPosition.seatsBottom+1,`split result is not clipped at ${width}x${height}: ${JSON.stringify(resultPosition)}`);

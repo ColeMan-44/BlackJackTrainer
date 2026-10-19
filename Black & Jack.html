@@ -1220,6 +1220,61 @@ body.activity-mode .app-options-button { display:none; }
  #table-panel .activity-screen .seats-row .card { width:29px; height:40px; font-size:9px; }
  #table-panel .activity-screen .seats-row .card .suit-big { font-size:13px; }
 }
+
+/* A compact rank/suit ledger replaces the old repeated-symbol manifest. */
+.exposed-card-table { width:100%; border-collapse:collapse; table-layout:fixed; font:12px 'JetBrains Mono',monospace; }
+.exposed-card-table caption { text-align:left; padding:8px 0 12px; font:11px/1.5 'Inter',sans-serif; color:var(--cream-dim); }
+.exposed-card-table th, .exposed-card-table td { padding:7px 3px; text-align:center; border-bottom:1px solid var(--felt-line); }
+.exposed-card-table thead th { color:var(--cream); background:var(--panel); }
+.exposed-card-table .red { color:#efafba; }
+.exposed-card-table td span { opacity:.6; font-size:10px; }
+.exposed-card-table td.has-exposed { background:#9cbda914; font-weight:700; }
+#table-panel .activity-screen .cut-card-marker { display:block; height:14px; width:2px; top:-4px; background:#e74b60; z-index:3; box-shadow:0 0 4px #e74b6066; }
+#table-panel .activity-screen .cut-card-marker::after { display:none; }
+#table-panel .activity-screen .deck-bar-outer { overflow:visible; }
+/* Seats fit the felt; hands grow upwards inside their own fixed area. */
+#table-panel .activity-screen #t-seats-row {
+ display:grid; grid-template-columns:repeat(var(--seat-columns,1),minmax(0,1fr));
+ grid-template-rows:repeat(var(--seat-rows,1),minmax(0,1fr)); direction:rtl;
+ width:100%; height:100%; min-height:0; gap:4px; padding:4px 8px 12px;
+ overflow:visible;
+}
+#table-panel .activity-screen #t-seats-row > .seat,
+#table-panel .activity-screen #t-seats-row > .seat:only-child {
+ direction:ltr; width:100%; min-width:0; max-width:none; min-height:0; margin:0; padding:2px;
+ display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+#table-panel .activity-screen #t-seats-row .seat-label { flex:none; max-width:100%; font-size:9px; letter-spacing:.3px; white-space:nowrap; }
+#table-panel .activity-screen #t-seats-row .notes, #table-panel .activity-screen #t-seats-row .total-chip { order:1; flex:none; padding:0 2px; line-height:12px; font-size:9px; }
+#table-panel .activity-screen #t-seats-row .hand-row,
+#table-panel .activity-screen #t-user-row {
+ order:2; position:relative; display:flex; flex:1 1 auto; width:100%; height:auto; min-height:24px;
+ margin:2px 0; padding:0; gap:4px; overflow:visible; justify-content:center;
+}
+#table-panel .activity-screen #t-seats-row .result-banner { order:3; flex:none; min-height:14px; padding:0; margin:0; font-size:9px; line-height:12px; }
+#table-panel .activity-screen .dealer-hand-row { position:relative; width:100%; height:clamp(40px,9dvh,90px); }
+#table-panel .activity-screen #casino-table .stepped-hand > .card {
+ position:absolute; flex:none; padding:2px 3px; margin:0; border-radius:4px;
+}
+#table-panel .activity-screen .stack-hand { position:relative; flex:1; min-width:0; height:100%; }
+#table-panel .activity-screen .split-hand-group { display:flex; flex-direction:column; flex:1; min-width:0; min-height:0; padding:1px; }
+#table-panel .activity-screen .split-hand-label { flex:none; font-size:8px; line-height:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#table-panel .activity-screen .split-hand-cards { position:relative; flex:1; min-height:20px; width:100%; }
+#table-panel .activity-screen #casino-table.crowded-table { min-height:280px; grid-template-rows:minmax(72px,.75fr) auto minmax(144px,1.25fr); }
+#table-panel .activity-screen #casino-table.crowded-table #t-seats-row { gap:4px; padding:2px 8px 10px; }
+#table-panel .activity-screen .crowded-table .seat-label { font-size:8px; }
+@media(max-height:650px){
+ #table-panel .activity-screen .dealer-hand-row { height:38px; }
+ #table-panel .activity-screen #casino-table.crowded-table { min-height:220px; grid-template-rows:52px auto minmax(122px,1fr); padding-top:3px; padding-bottom:8px; }
+ #table-panel .activity-screen .crowded-table .cat-dealer { width:28px; height:28px; }
+ #table-panel .activity-screen .crowded-table .dealer-hand-row { height:30px; }
+ #table-panel .activity-screen .crowded-table .seat-label, #table-panel .activity-screen .crowded-table .notes { font-size:8px !important; line-height:10px !important; }
+ #table-panel .activity-screen #casino-table.crowded-table .result-banner { min-height:10px; font-size:8px; line-height:10px; }
+}
+
+#table-panel .activity-screen .compact-card > .suit-big,
+#table-panel .activity-screen .compact-card > span:last-child { display:none; }
+#table-panel .activity-screen .stepped-hand > .card > span:first-child { white-space:nowrap; font-size:inherit; line-height:1; }
 </style>
 </head>
 <body>
@@ -1777,7 +1832,7 @@ body.activity-mode .app-options-button { display:none; }
         <div class="field">
           <label for="t-user-position">Your seat / turn order</label>
           <select id="t-user-position"><option value="0">Seat 1 — rightmost, first to act</option></select>
-          <p class="notes">Seats run right to left as you face the dealer. Your seat changes dealing and playing order. Change seats between rounds.</p>
+          <p class="notes">Seats play right to left; large tables use a second row on phones. Your seat changes dealing and playing order. Change seats between rounds.</p>
         </div>
         <div class="field">
           <label>Counting system</label>
@@ -1855,7 +1910,7 @@ body.activity-mode .app-options-button { display:none; }
             <span class="table-lettering-rule" id="t-felt-rule">Dealer stands on soft 17 · Insurance pays 2 to 1</span>
           </div>
 
-          <p class="notes table-seat-hint">Turns run from right to left. On small screens, swipe the seats to see every player.</p>
+          <p class="notes table-seat-hint">Seats play from right to left. Small screens use two compact rows when needed.</p>
           <div class="seats-row" id="t-seats-row" tabindex="0" aria-label="Player seats, first seat on the right">
             <div class="seat seat-user" id="t-user-seat">
               <div class="result-banner" id="t-user-banner"></div>
@@ -1978,14 +2033,11 @@ body.activity-mode .app-options-button { display:none; }
   <!-- ===================== GRAVEYARD PANEL ===================== -->
   <section id="dealt-cards" class="dealt-cards" hidden>
     <div class="felt">
-      <div class="row-label">Full deck list — current Play Table shoe</div>
-      <p class="notes" style="margin-bottom:16px;">Every card in the shoe you're using at the Play Table, laid out in place. Faded cards are still in the shoe; a card lights up the moment it's actually dealt (the dealer's hole card lights up only once it's revealed). Resets whenever that shoe reshuffles.</p>
+      <div class="row-label">Exposed cards · current Play shoe</div>
+      <p class="notes" style="margin-bottom:16px;">Counts for the current Play shoe only. Each cell shows exposed copies out of the total copies of that rank and suit. Jack’s hole card is included only after it is revealed. Resets when the shoe is reshuffled.</p>
       <div class="notes" style="margin-bottom:14px;" id="graveyard-summary">— / — dealt</div>
       <div class="deck-manifest" id="graveyard-manifest"></div>
-      <div class="poster-legend" style="margin-top:16px; color:var(--cream-dim);">
-        <span><b style="background:rgba(255,255,255,0.06); color:var(--cream-dim); opacity:0.4;">░░</b>Still in shoe</span>
-        <span><b style="background:var(--gold); color:#1c1508;">██</b>Dealt</span>
-      </div>
+
     </div>
   </section>
 
@@ -2201,7 +2253,7 @@ body.activity-mode .app-options-button { display:none; }
   <!-- ===================== SETTINGS PANEL ===================== -->
   <section id="shared-options" class="shared-options" hidden>
     <div class="felt">
-      <div class="row-label">Table rules</div><p class="notes">Standard 4–8 deck blackjack, 3:2 payout, dealer checks for blackjack, double on any first two cards, one split per hand, and one card per split Ace. Single- and double-deck strategy is not supported yet. Soft 17 means an Ace counts as 11; late surrender returns half your bet before you play, after the dealer checks for blackjack.</p>
+      <div class="row-label">Game rules · Play, Basic Strategy &amp; Simulator</div><p class="notes rule-scope">These activities share one ruleset so your practice advice matches Play. Counting and Hand Totals use only the deck count; sound applies everywhere.</p><p class="notes game-rule-context">Standard 4–8 deck blackjack, 3:2 payout, dealer checks for blackjack, double on any first two cards, one split per hand, and one card per split Ace. Single- and double-deck strategy is not supported yet. Soft 17 means an Ace counts as 11; late surrender returns half your bet before you play, after the dealer checks for blackjack.</p>
       <p class="notes" id="rules-summary" style="margin-bottom:14px;"></p>
       <div class="settings-row">
         <div class="field">
@@ -2226,7 +2278,7 @@ body.activity-mode .app-options-button { display:none; }
         </div>
       </div>
 
-      <p class="notes">Shared table rules apply across practice and play. Each activity has its own options at the top of its tab.</p>
+      <p class="notes">Game-rule changes apply to Play, Basic Strategy, the strategy chart, and Simulator. Counting drills use the deck count, not dealer or betting rules.</p>
     </div>
   </section>
 
@@ -2293,6 +2345,7 @@ body.activity-mode .app-options-button { display:none; }
   function cardEl(card, big){
     const div = document.createElement('div');
     div.className = (big? 'card' : 'mini-card') + (card.red ? ' red' : '');
+    div.dataset.rank = card.rank; div.dataset.suit = card.suit;
     div.innerHTML = `<span>${card.rank}</span><span class="suit-big">${card.suit}</span><span>${card.rank}</span>`;
     return div;
   }
@@ -3672,23 +3725,18 @@ body.activity-mode .app-options-button { display:none; }
     const counts = {};
     tableGraveyard.forEach(c=>{ const key = c.rank + c.suit; counts[key] = (counts[key]||0) + 1; });
 
-    wrap.innerHTML = MANIFEST_RANKS.map(rank=>{
-      const suitGroups = MANIFEST_SUITS.map(suit=>{
-        const key = rank + suit.sym;
-        const dealtCount = counts[key] || 0;
-        const cells = [];
-        for(let i=0;i<decks;i++){
-          const isDealt = i < dealtCount;
-          cells.push(`<div class="manifest-cell ${suit.red ? 'red' : ''} ${isDealt ? 'dealt' : ''}">${suit.sym}</div>`);
-        }
-        return `<div class="manifest-suit-group">${cells.join('')}</div>`;
+    const header = MANIFEST_SUITS.map(suit=>`<th scope="col" class="${suit.red?'red':''}">${suit.sym}</th>`).join('');
+    const rows = MANIFEST_RANKS.map(rank=>{
+      const cells = MANIFEST_SUITS.map(suit=>{
+        const count = counts[rank+suit.sym] || 0;
+        return `<td class="${suit.red?'red':''} ${count?'has-exposed':''}" aria-label="${rank}${suit.sym}: ${count} of ${decks} exposed">${count}<span> / ${decks}</span></td>`;
       }).join('');
-      return `<div class="manifest-row"><div class="manifest-rank-label">${rank}</div><div class="manifest-suits">${suitGroups}</div></div>`;
+      return `<tr><th scope="row">${rank}</th>${cells}</tr>`;
     }).join('');
-
-    const total = decks * 52;
-    document.getElementById('graveyard-summary').textContent = `${tableGraveyard.length} / ${total} dealt`;
+    wrap.innerHTML = `<table class="exposed-card-table"><caption>Exposed copies / total copies of each card</caption><thead><tr><th scope="col">Rank</th>${header}</tr></thead><tbody>${rows}</tbody></table>`;
+    document.getElementById('graveyard-summary').textContent = `${tableGraveyard.length} of ${decks*52} cards exposed`;
   }
+
   function tableShoeLow(){
     const total = tableShoeState.totalDecks*52;
     const minCards = Math.max(20, Math.floor(total*0.15));
@@ -3818,6 +3866,7 @@ body.activity-mode .app-options-button { display:none; }
     const el = cardEl(card, big);
     el.classList.add('deal-in');
     container.appendChild(el);
+    layoutTableHands();
     animateFromShoe(el);
     playCardSound();
     dealerPawSwipe();
@@ -3827,6 +3876,7 @@ body.activity-mode .app-options-button { display:none; }
     const el = document.createElement('div');
     el.className = 'card back deal-in';
     container.appendChild(el);
+    layoutTableHands();
     animateFromShoe(el);
     playCardSound();
     dealerPawSwipe();
@@ -3863,7 +3913,7 @@ body.activity-mode .app-options-button { display:none; }
     const previous = Math.min(count, Number(select.value) || 0);
     select.replaceChildren();
     for(let i=0;i<=count;i++){
-      const description = i===0 ? 'rightmost, first to act' : i===count ? 'leftmost, last to act' : `turn ${i+1}`;
+      const description = i===0 ? 'rightmost, first to act' : i===count ? 'last to act' : `turn ${i+1}`;
       select.add(new Option(`Seat ${i+1} — ${description}`, String(i)));
     }
     select.value = String(previous);
@@ -3887,7 +3937,7 @@ body.activity-mode .app-options-button { display:none; }
       element.classList.add('seat-current');
       const row = document.getElementById('t-seats-row');
       // Move only the seat strip, leaving the page and action buttons in place.
-      row.scrollLeft += element.getBoundingClientRect().left + element.offsetWidth/2 - (row.getBoundingClientRect().left + row.clientWidth/2);
+      row.scrollLeft = 0;
     }
   }
   async function playTableAISeats(start, end, dealerUpVal, systemKey){
@@ -3914,7 +3964,7 @@ body.activity-mode .app-options-button { display:none; }
     const userSeat = document.getElementById('t-user-seat');
     userSeat.style.order = tableUserSeatIndex;
     userSeat.classList.remove('seat-current');
-    document.getElementById('t-user-seat-number').textContent = `· Seat ${tableUserSeatIndex+1}`;
+    document.getElementById('t-user-seat-number').textContent = `· ${tableUserSeatIndex+1}`;
     seatsRow.style.setProperty('--seat-count', aiCount+1);
     for(let i=0;i<aiCount;i++){
       const seat = document.createElement('div');
@@ -3925,7 +3975,8 @@ body.activity-mode .app-options-button { display:none; }
       seat.appendChild(banner);
       const label = document.createElement('div');
       label.className = 'seat-label';
-      label.textContent = `Player ${i+1} · Seat ${tableSeatOrder.indexOf(i)+1}`;
+      label.textContent = `Seat ${tableSeatOrder.indexOf(i)+1}`;
+      seat.setAttribute('aria-label',`Player ${i+1}, seat ${tableSeatOrder.indexOf(i)+1}`);
       seat.appendChild(label);
       const betSpot = document.createElement('div');
       betSpot.className = 'seat-bet-spot';
@@ -3942,15 +3993,16 @@ body.activity-mode .app-options-button { display:none; }
     }
     tableSeatOrder.forEach(player=>seatsRow.appendChild(player==='user' ? userSeat : aiSeatEls[player].seatEl));
     seatsRow.scrollLeft = 0;
+    layoutTableHands();
   }
   function updateAISeatsFromResults(resultsList){
     resultsList.forEach((handsArr, idx)=>{
       const seat = aiSeatEls[idx];
       if(!seat) return;
       seat.handRowEl.innerHTML = '';
-      handsArr.forEach((h, hi)=>{
-        h.cards.forEach(c=>seat.handRowEl.appendChild(cardEl(c, true)));
-        if(hi < handsArr.length-1) seat.handRowEl.appendChild(tableDivider());
+      handsArr.forEach(h=>{
+        const stack = document.createElement('div');stack.className = 'stack-hand';
+        h.cards.forEach(c=>stack.appendChild(cardEl(c,true)));seat.handRowEl.append(stack);
       });
       const totals = handsArr.map(h=>{
         const {total, soft} = handValue(h.cards);
@@ -3958,6 +4010,7 @@ body.activity-mode .app-options-button { display:none; }
       }).join(' / ');
       seat.totalEl.textContent = totals;
     });
+    layoutTableHands();
   }
 
   function renderTableDealerRow(showHole){
@@ -3975,9 +4028,9 @@ body.activity-mode .app-options-button { display:none; }
     const row = document.getElementById('t-user-row');
     row.innerHTML = '';
     if(splitResults){
-      splitResults.forEach((h, hi)=>{
-        h.cards.forEach(c=>row.appendChild(cardEl(c, true)));
-        if(hi < splitResults.length-1) row.appendChild(tableDivider());
+      splitResults.forEach(h=>{
+        const stack = document.createElement('div');stack.className = 'stack-hand';
+        h.cards.forEach(c=>stack.appendChild(cardEl(c,true)));row.append(stack);
       });
       const totals = splitResults.map(h=>{
         const {total, soft} = handValue(h.cards);
@@ -4015,6 +4068,7 @@ body.activity-mode .app-options-button { display:none; }
       row.appendChild(group);
     });
     document.getElementById('t-user-total').textContent = '';
+    layoutTableHands();
   }
   function appendCardToActiveSplitHand(card){
     const idx = tableActiveHandIdx;
@@ -4605,6 +4659,17 @@ body.activity-mode .app-options-button { display:none; }
       unlockedAchievements = Object.fromEntries(ACHIEVEMENT_DEFS.filter(a=>data.unlockedAchievements?.[a.id]===true).map(a=>[a.id,true]));
     } catch { /* Ignore malformed or unavailable browser storage. */ }
   }
+  function configureSharedOptions(activity){
+    const drillOnly = ['counting','speedcount','cardmath'].includes(activity);
+    const shared = document.getElementById('shared-options');
+    shared.querySelector('.row-label').textContent = drillOnly ? 'Decks & sound' : 'Game rules · Play, Basic Strategy & Simulator';
+    shared.querySelector('.rule-scope').textContent = drillOnly ? 'Only deck count affects this drill. Sound applies everywhere.' : 'These activities share one ruleset so your practice advice matches Play. Counting and Hand Totals use only the deck count; sound applies everywhere.';
+    shared.querySelectorAll('.field').forEach(field=>{
+      field.hidden = drillOnly && !['g-decks','g-sound'].includes(field.querySelector('select')?.id);
+    });
+    shared.querySelector('#rules-summary').hidden = drillOnly;
+    shared.querySelectorAll('.game-rule-context').forEach(el=>{el.hidden = drillOnly;});
+  }
   function openActivityDialog(dialog, id){
     const remaining = bsTimerInterval !== null ? bsTimeLeft : BS_TIMER_SECONDS;
     const pausedHand = playerHand;
@@ -4612,7 +4677,7 @@ body.activity-mode .app-options-button { display:none; }
     const resumeCounting = id==='counting' && dealTimer !== null;
     if(id==='strategy') clearBsTimer();
     if(resumeCounting) stopCountingTimer();
-    if(dialog.id.endsWith('-options-dialog')) dialog.append(document.getElementById('shared-options'));
+    if(dialog.id.endsWith('-options-dialog')){ configureSharedOptions(id); dialog.append(document.getElementById('shared-options')); }
     dialog.querySelector('.dialog-pause-note').hidden = !(resumeCounting || (id==='strategy' && bsDecisionActive && bsTimedModeOn()));
     dialog.showModal();
     dialog.addEventListener('close', ()=>{
@@ -4623,6 +4688,72 @@ body.activity-mode .app-options-button { display:none; }
       }
     }, {once:true});
   }
+  function layoutTableHands(){
+    const table = document.getElementById('casino-table');
+    const seats = document.getElementById('t-seats-row');
+    const players = [...seats.children];
+    const crowded = innerWidth<=600 && players.length>4;
+    table.classList.toggle('crowded-table',crowded);
+    seats.style.setProperty('--seat-columns',crowded?8:players.length);
+    seats.style.setProperty('--seat-rows',crowded?2:1);
+    players.forEach((seat,index)=>{
+      seat.style.transform = '';
+      seat.style.gridColumn = crowded ? index<4 ? 'span 2' : `${(8-(players.length-4)*2)/2+1+(index-4)*2} / span 2` : '';
+    });
+    for(const hand of table.querySelectorAll('.hand-row, .stack-hand, .split-hand-cards')){
+      const cards = [...hand.children].filter(el=>el.classList.contains('card'));
+      hand.classList.toggle('stepped-hand',cards.length>0);
+      if(!cards.length || !hand.clientWidth || !hand.clientHeight) continue;
+      const availableW = hand.clientWidth, availableH = hand.clientHeight;
+      const cardH = Math.max(18,Math.min(76,availableH*(cards.length>1?.7:1),availableW*1.36));
+      const cardW = cardH/1.4;
+      const stepX = cards.length>1 ? Math.min(7,Math.max(0,(availableW-cardW)/(cards.length-1))) : 0;
+      const stepY = cards.length>1 ? Math.min(16,(availableH-cardH)/(cards.length-1)) : 0;
+      const startX = (availableW-cardW-stepX*(cards.length-1))/2;
+      cards.forEach((card,index)=>{
+        Object.assign(card.style,{width:cardW+'px',height:cardH+'px',left:(startX+index*stepX)+'px',top:((cards.length-1-index)*stepY)+'px',fontSize:Math.max(7,Math.min(12,cardW*.24))+'px',zIndex:String(cards.length-index)});
+        card.classList.toggle('compact-card',cardH<35);
+        const corner = card.firstElementChild;
+        const text = card.dataset.rank ? card.dataset.rank+card.dataset.suit : '';
+        if(corner && text && corner.textContent!==text) corner.textContent = text;
+        card.setAttribute('aria-label',card.classList.contains('back')?'Face-down card':text);
+        const suit = card.querySelector('.suit-big');if(suit) suit.style.fontSize = Math.max(10,cardH*.26)+'px';
+      });
+    }
+    // Lift edge seats along the curved front rail, based on their actual card extents.
+    const board = table.getBoundingClientRect();
+    if(!board.width || !board.height) return;
+    const rx = board.width*.5, ry = board.height*.36;
+    const bottomAt = x=>{
+      const center = x<board.left+rx ? board.left+rx : board.right-rx;
+      const distance = Math.abs(x-center)/rx;
+      return board.bottom-ry+ry*Math.sqrt(Math.max(0,1-distance*distance))-12;
+    };
+    players.forEach(seat=>{
+      let lift = 0;
+      for(const item of seat.querySelectorAll('.card, .result-banner.show')){
+        let left,right,bottom;
+        if(item.classList.contains('card')){
+          const hand = item.parentElement.getBoundingClientRect();
+          left = hand.left+item.offsetLeft;right = left+item.offsetWidth;
+          bottom = hand.top+item.offsetTop+item.offsetHeight;
+        } else {
+          const rect = item.getBoundingClientRect();left=rect.left;right=rect.right;bottom=rect.bottom;
+        }
+        lift = Math.max(lift,bottom-Math.min(bottomAt(left-3),bottomAt(right+3)));
+      }
+      if(lift>0) seat.style.transform = `translateY(-${Math.ceil(lift)}px)`;
+    });
+  }
+  function initializeTableHandLayout(){
+    const table = document.getElementById('casino-table');
+    let frame;
+    const schedule = ()=>{cancelAnimationFrame(frame);frame = requestAnimationFrame(layoutTableHands);};
+    new MutationObserver(schedule).observe(table,{childList:true,subtree:true});
+    new ResizeObserver(schedule).observe(table);
+    window.addEventListener('resize',schedule);
+    layoutTableHands();
+  }
   function initializeActivityShells(){
     const shared = document.getElementById('shared-options'); shared.hidden = false;
     const globalOptions = document.createElement('dialog'); globalOptions.id = 'global-options-dialog';globalOptions.className = 'activity-dialog';
@@ -4630,7 +4761,7 @@ body.activity-mode .app-options-button { display:none; }
     globalOptions.innerHTML = '<div class="dialog-header"><h2 id="global-options-title">Options</h2><button class="act dialog-close">Done</button></div>';
     globalOptions.querySelector('.dialog-close').addEventListener('click',()=>globalOptions.close());
     globalOptions.append(shared); document.body.append(globalOptions);
-    document.querySelector('.app-options-button').addEventListener('click',()=>{ globalOptions.append(shared); globalOptions.showModal(); });
+    document.querySelector('.app-options-button').addEventListener('click',()=>{ configureSharedOptions('global'); globalOptions.append(shared); globalOptions.showModal(); });
     const definitions = [
       ['table','Play','Table tools'], ['strategy','Strategy','Progress'],
       ['counting','Counting','Stats & help'], ['speedcount','Count speed','Stats'], ['cardmath','Hand totals','Stats']
@@ -4736,6 +4867,7 @@ body.activity-mode .app-options-button { display:none; }
   cmUpdateStats();
   cmDealNext();
   initializeActivityShells();
+  initializeTableHandLayout();
   scheduleDeckRunners();
   syncMobileDealBar();
 })();

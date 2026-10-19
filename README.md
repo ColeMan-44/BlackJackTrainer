@@ -4,7 +4,7 @@ A browser blackjack trainer with basic strategy, counting drills, practice play,
 
 ## Supported rules
 
-4–8 decks, 3:2 blackjack, American hole-card/peek rules, S17 or H17, optional double after split and late surrender. Double on any first two cards; one split into two hands; split Aces receive one card each. Single- and double-deck strategy is intentionally unavailable until dedicated tables are implemented.
+4–8 decks, 3:2 blackjack, American hole-card/peek rules, S17 or H17, optional double after split and late surrender. Double on any first two cards; one split into two hands; split Aces receive one card each. Single- and double-deck strategy is intentionally unavailable until dedicated tables are implemented. Dealer and betting rules are shared by Play, Basic Strategy, the strategy chart, and Simulator. Counting and Hand Totals show only Decks and Sound in Options because the other rules do not affect those drills.
 
 Use **Start training** for the basic strategy drill. The drill tests decisions; **Play** runs complete rounds. Progress is stored in this browser when browser storage is available. Use **Reset progress** to clear it. Keyboard shortcuts while the training panel has focus: H hit, S stand, D double, P split, R surrender, N next hand. Controls retain normal keyboard behavior when focused.
 
@@ -14,17 +14,17 @@ Play and the four practice activities use a screen-sized layout: cards, primary 
 
 Activity options cover Basic Strategy (timer and insurance), Card Counting (system, speed, drill length), Counting Speed (system, cards per round, running total), Hand Totals (total visibility), and Play (players, seat, counting system). Strategy guide and Table count have matching Show/Hide buttons in **Table tools**; Shoe has the same control on the game screen. These remain available during a round. Shared table rules and sound live in the same **Options** panel, using a single shared set of controls across activities. The home and learning screens also have an Options button; there is no separate Settings tab.
 
-The normal portrait game and drill layouts fit the tested phone viewports, including 320×568. Longer reference material, detailed panels, and constrained views such as landscape or a large text size can still scroll; multiple player seats scroll horizontally. This remains a browser application, without installation or offline PWA support yet.
+The normal portrait game and drill layouts fit the tested phone viewports, including 320×568. Longer reference material, detailed panels, and constrained views such as landscape or a large text size can still scroll; player seats fit on the felt without horizontal scrolling. Phones use two compact rows for five to seven players. This remains a browser application, without installation or offline PWA support yet.
 
 ## Black, Jack, and the table
 
-**Black** is the black cat who reacts to your decisions and explains the strategy in a persistent coaching strip. **Jack** is the black-and-white dealer at the straight edge of the half-moon table. Cards animate from the draw shoe; completed hands are swept into the discard tray when the next round begins. The discard count tracks cleared prior rounds, while the draw counter tracks cards remaining in the shoe. Results appear as labels beneath the cards, including the exact amount won or lost; split-hand results show the combined net amount. Reduced-motion preferences skip card travel.
+**Black** is the black cat who reacts to your decisions and explains the strategy in a persistent coaching strip. **Jack** is the black-and-white dealer at the straight edge of the half-moon table. Cards animate from the draw shoe; completed hands are swept into the discard tray when the next round begins. The red shoe cut marker shows the 15% remaining-card reshuffle threshold. The discard count tracks cleared prior rounds, while the draw counter tracks cards remaining in the shoe. Results appear as labels beneath the cards, including the exact amount won or lost; split-hand results show the combined net amount. Reduced-motion preferences skip card travel.
 
-**Table tools** contains strategy, counts, results, and an expandable **Dealt cards · current shoe** reference. That reference tracks exposed cards from Play only; the dealer’s hole card is included after it is revealed. It is no longer a Learn destination.
+**Table tools** contains strategy, counts, results, and an expandable **Dealt cards · current shoe** reference. That reference is a rank-by-suit ledger showing exposed copies out of the copies in the shoe. It tracks exposed cards from Play only; the dealer’s hole card is included after it is revealed. It is no longer a Learn destination.
 
 ## Player seating
 
-In **Play → Options → Table setup**, choose the number of AI players and **Your seat / turn order**. Seat 1 is the rightmost seat and acts first by default. Both cards and turns proceed right to left, with the dealer playing last. Choosing a middle or last seat makes the AI players before you finish before your turn; the remaining players wait until you finish. Seat changes are available between rounds. On phones, swipe the seat strip horizontally; action controls stay outside the strip.
+In **Play → Options → Table setup**, choose the number of AI players and **Your seat / turn order**. Seat 1 is the rightmost seat and acts first by default. Both cards and turns proceed right to left, with the dealer playing last. Choosing a middle or last seat makes the AI players before you finish before your turn; the remaining players wait until you finish. Seat changes are available between rounds. Hands use overlapping cards stepped upward, with no side scrolling for extra cards. All seats fit the felt; phones use two rows for five to seven players. Action controls stay outside the felt.
 
 ## Validation
 

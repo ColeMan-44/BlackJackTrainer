@@ -58,7 +58,7 @@ const assert=require('node:assert/strict');
    assert.equal(await page.locator('#t-user-position').isEnabled(),true);
    await page.locator('#table-panel .activity-options-button').click();
  }
- // Seven players stay in one scrollable row at phone and desktop sizes.
+ // Seven players fit without scrolling; phones use two rows.
  await page.locator('#t-ai-count').selectOption('6');
  await page.locator('#t-user-position').selectOption('3');
  await page.locator('#table-options-dialog .dialog-close').click();
@@ -66,9 +66,9 @@ const assert=require('node:assert/strict');
  for(const width of [1440,768,375,320]){
    await page.setViewportSize({width,height:1000});
    const geometry=await page.locator('#t-seats-row').evaluate(row=>({tops:[...row.children].map(e=>e.getBoundingClientRect().top),overflow:document.documentElement.scrollWidth>innerWidth,scrollable:row.scrollWidth>row.clientWidth}));
-   assert.equal(new Set(geometry.tops).size,1,'no wrapping, even with seven seats');
+   assert.equal(new Set(geometry.tops).size,width<=600?2:1,'responsive rows fit every seat');
    assert.equal(geometry.overflow,false,`no page overflow at ${width}`);
-   if(width<=375) assert.ok(geometry.scrollable,'phone seat strip scrolls');
+   assert.equal(geometry.scrollable,false,'seats never need side scrolling');
    if(width===375) await page.screenshot({path:'/tmp/seating-mobile.png',fullPage:true,animations:'disabled'});
  }
  await page.locator('[data-tab="table"]').click();
