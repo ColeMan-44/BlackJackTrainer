@@ -10,7 +10,7 @@ Use **Start training** for the basic strategy drill. The drill tests decisions; 
 
 ## Activity options
 
-Each activity has its options at the top of its own tab: Basic Strategy (timer and insurance), Card Counting (system, speed, drill length), Counting Speed (system, cards per round, running total), Hand Totals (total visibility), and Play (players, seat, count system, count visibility, shoe visibility). Shared table rules and sound remain in Settings. Changing Card Counting options resets that drill so the new selection applies on its next start.
+Each activity has its options at the top of its own tab: Basic Strategy (timer and insurance), Card Counting (system, speed, drill length), Counting Speed (system, cards per round, running total), Hand Totals (total visibility), and Play (players, seat, counting system). Strategy guide, Table count, and Shoe each have a matching Show/Hide button beside their heading; these remain available during a round. Shared table rules and sound remain in Settings. Changing Card Counting options resets that drill so the new selection applies on its next start.
 
 ## Player seating
 
@@ -29,6 +29,6 @@ npm run test:browser
 
 For an existing Chromium installation, skip the browser download and run `CHROMIUM_PATH=/usr/bin/chromium npm run test:browser`.
 
-Strategy regression tests cover S17/H17 decisions, surrender eligibility, double fallbacks, no-DAS pairs, split-hand play, and Ace totals. Browser checks cover navigation, decisions, storage persistence, dealing locks, settlement, mobile horizontal overflow, first/middle/last seating, right-to-left dealing and play, correct counts, and seven-seat layouts. Browser screenshots are written to `/tmp/blackjack-desktop.png` and `/tmp/blackjack-mobile.png`.
+Strategy regression tests cover S17/H17 decisions, surrender eligibility, double fallbacks, no-DAS pairs, split-hand play, and Ace totals. Browser checks cover navigation, decisions, storage persistence, dealing locks, settlement, mobile horizontal overflow, first/middle/last seating, right-to-left dealing and play, correct counts, seven-seat layouts, local Show/Hide controls during play, active split-hand advice, and hole-card count visibility. Browser screenshots are written to `/tmp/blackjack-desktop.png` and `/tmp/blackjack-mobile.png`.
 
 The simulator is a practice aid, not a guarantee of returns. Exhaustive strategy validation, adaptive drills for missed hands, and full counting-system betting calibration remain future work.
