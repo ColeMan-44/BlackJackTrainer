@@ -9,6 +9,24 @@ const assert=require('node:assert/strict');
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.route('http://blackjack.test/**',r=>r.fulfill({contentType:'text/html',body:fs.readFileSync(path.join(__dirname,'../index.html'),'utf8')}));
  await page.goto('http://blackjack.test/');
+ // Global Options is a dialog action, not navigation to a missing tab.
+ for(const id of ['home','rules','cheatsheet','math','simulator']){
+  if(id!=='home') await page.locator('.nav-group summary').filter({hasText:'Learn'}).click();
+  await page.locator(`[data-tab="${id}"]`).click();
+  for(const close of ['done','escape']){
+   const options=page.locator('.app-options-button');
+   await options.click();
+   assert.ok(await page.locator(`#${id}-panel`).evaluate(e=>e.classList.contains('active') && !e.inert),'previous page stays active behind Options');
+   assert.ok(await page.locator('#global-options-dialog').isVisible());
+   if(close==='done') await page.locator('#global-options-dialog .dialog-close').click();
+   else await page.keyboard.press('Escape');
+   assert.equal(await page.locator('#global-options-dialog').isVisible(),false);
+   assert.equal(await page.locator('.panel.active').getAttribute('id'),id+'-panel','closing Options preserves the previous tab');
+   assert.ok(await page.locator(`#${id}-panel`).isVisible());
+   assert.ok(await options.evaluate(e=>e===document.activeElement),'focus returns to Options');
+  }
+ }
+
  async function activity(id){
   if(id==='table') await page.locator('[data-tab="table"]').click();
   else {await page.locator('.nav-group summary').filter({hasText:'Practice'}).click();await page.locator(`[data-tab="${id}"]`).click();}
@@ -29,6 +47,10 @@ const assert=require('node:assert/strict');
    await page.keyboard.press('Escape');
    assert.equal(await page.locator(`#${id}-options-dialog`).isVisible(),false);
    assert.equal(await options.evaluate(e=>e===document.activeElement),true,'focus returns to opener');
+   await options.click();
+   await page.locator(`#${id}-options-dialog .dialog-close`).click();
+   assert.equal(await page.locator('.panel.active').getAttribute('id'),id+'-panel','Done returns to the current activity');
+   assert.ok(await page.locator(`#${id}-panel .activity-screen`).isVisible());
   }
  }
  await activity('counting');

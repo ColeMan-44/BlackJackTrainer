@@ -3025,6 +3025,7 @@ body.activity-mode .app-options-button { display:none; }
   });
   // ---------------- Tabs ----------------
   function activateTab(tabName){
+    if(!tabName || !document.getElementById(tabName+'-panel')) return;
     document.querySelectorAll('.activity-dialog[open]').forEach(dialog=>dialog.close());
     document.body.classList.toggle('activity-mode', ['table','strategy','counting','speedcount','cardmath'].includes(tabName));
     document.querySelectorAll('.nav-group').forEach(el=>{ el.open = false; });
@@ -3038,7 +3039,7 @@ body.activity-mode .app-options-button { display:none; }
     if(panel){ panel.classList.add('active'); panel.inert = false; panel.setAttribute('tabindex','-1'); panel.focus({preventScroll:true}); }
     window.scrollTo({top:0, behavior:'instant'});
   }
-  document.querySelectorAll('.tab').forEach(btn=>{
+  document.querySelectorAll('.tab[data-tab]').forEach(btn=>{
     btn.addEventListener('click', ()=>activateTab(btn.dataset.tab));
   });
   document.querySelectorAll('[data-goto]').forEach(btn=>{
