@@ -910,6 +910,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
   #casino-table { padding:18px 12px 22px; border-radius:48px 48px 28px 28px; }
   #casino-table .cat-dealer { width:64px; height:64px; }
   #casino-table .cat-widget-group { display:none; }
+  #table-panel.round-idle #t-normal-actions { display:none; }
   #casino-table .dealer-hand-row { min-height:78px; }
   #casino-table .dealer-spot .result-banner { top:60px; left:calc(50% + 64px); }
   .table-lettering { padding:16px 4px; margin:8px 0 16px; }
@@ -917,6 +918,39 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
   .table-lettering-rule { font-size:10px; letter-spacing:.2px; }
   #casino-table #t-user-row { min-height:100px; min-width:160px; padding:12px 18px; }
   #casino-table .seat-user { padding:8px 0 0; }
+}
+
+/* First base is on the right as viewed by the player; play proceeds left. */
+#table-panel .table-felt, #casino-table { min-width:0; }
+#casino-table .seats-row {
+  flex-direction:row-reverse; flex-wrap:nowrap; justify-content:flex-start;
+  align-items:stretch; gap:12px; overflow-x:auto; overflow-y:hidden;
+  padding:22px 4px 14px; box-sizing:border-box;
+  overscroll-behavior-x:contain; scrollbar-width:thin;
+}
+#casino-table .seats-row > .seat {
+  flex:1 0 142px; width:auto; min-width:142px; max-width:none;
+  padding:14px 8px; border:1px solid #91b2a132; border-radius:40px 40px 20px 20px;
+  text-align:center; background:#0b1c151a;
+}
+#casino-table .seats-row > .seat-user { border-color:#9abfae85; background:#91b2a10a; box-shadow:inset 0 2px 0 #a9d2bc; }
+#casino-table .seats-row > .seat-current { background:#91b2a11c; border-color:#c0dec9; }
+#casino-table .seats-row .seat-label { line-height:1.6; font-size:11px; }
+#casino-table .seats-row .hand-row, #casino-table #t-user-row {
+  min-width:0; width:100%; max-width:none; min-height:96px;
+  margin:12px 0; padding:0; border:0; border-radius:0; background:none;
+  justify-content:center; gap:5px;
+}
+#casino-table .seats-row .card { width:50px; height:72px; font-size:12px; }
+#casino-table .seats-row .card .suit-big { font-size:20px; }
+#casino-table .seat-bet-spot { display:none; }
+#casino-table .seats-row .total-chip { font-size:11px; margin:0; }
+#casino-table .seats-row .result-banner { top:0; font-size:12px; }
+.table-seat-hint { text-align:center; margin:0; font-size:11px; }
+.table-action-dock > .actions { justify-content:center; margin:0 0 18px; }
+.table-action-dock .act { min-width:80px; }
+@media(min-width:601px) {
+  #casino-table .seats-row > .seat:only-child { flex:0 1 320px; margin:auto; }
 }
 </style>
 </head>
@@ -1466,12 +1500,19 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
             <span class="table-lettering-rule" id="t-felt-rule">Dealer stands on soft 17 · Insurance pays 2 to 1</span>
           </div>
 
-          <div class="seats-row" id="t-seats-row">
+          <p class="notes table-seat-hint">Turns run from right to left. On small screens, swipe the seats to see every player.</p>
+          <div class="seats-row" id="t-seats-row" tabindex="0" aria-label="Player seats, first seat on the right">
             <div class="seat seat-user" id="t-user-seat">
               <div class="result-banner" id="t-user-banner"></div>
-              <div class="seat-label">You <span id="t-user-total" class="total-chip"></span></div>
+              <div class="seat-label">You <span id="t-user-seat-number"></span></div>
+              <div id="t-user-total" class="total-chip"></div>
               <div class="hand-row" id="t-user-row"></div>
-              <div class="actions" id="t-insurance-actions" style="display:none;">
+
+            </div>
+          </div>
+        </div>
+
+        <div class="table-action-dock">              <div class="actions" id="t-insurance-actions" style="display:none;">
                 <button class="act primary" id="t-btn-insure-yes">Take insurance</button>
                 <button class="act" id="t-btn-insure-no">No insurance</button>
               </div>
@@ -1485,8 +1526,6 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
               <div class="actions" id="t-mobile-deal-bar">
                 <button class="act primary" id="btn-table-deal-mobile">Deal round</button>
               </div>
-            </div>
-          </div>
         </div>
 
         <div class="chip-rail">
@@ -1882,6 +1921,11 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
           <select id="t-ai-count"><option value="0" selected>0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option></select>
         </div>
         <div class="field">
+          <label for="t-user-position">Your seat / turn order</label>
+          <select id="t-user-position"><option value="0">Seat 1 — rightmost, first to act</option></select>
+          <p class="notes">Seats run right to left as you face the dealer. Your seat changes dealing and playing order. Change seats between rounds.</p>
+        </div>
+        <div class="field">
           <label>Counting system</label>
           <select id="t-system">
             <option value="hilo">Hi-Lo</option>
@@ -2275,7 +2319,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     document.getElementById('t-user-row').innerHTML = '';
     document.getElementById('t-user-total').textContent = '';
     document.getElementById('t-round-summary').innerHTML = '';
-    buildAISeats(0);
+    buildAISeats(Number(document.getElementById('t-ai-count').value));
     clearBanners();
     clearTableStrategyGuide();
     scResetShoe();
@@ -3261,6 +3305,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
   let tableShoeState = null;
   let tableDealerCards = [], tableDealerHoleCard = null, tableDealerHoleRevealed = false, tableDealerBJAtStart = false;
   let tableAIResultsForRound = [];
+  let tableRoundAIHands = [], tableSeatOrder = [], tableUserSeatIndex = 0;
   let tableUserCards = [], tableUserCanDouble = true, tableUserCanSplit = true;
   let tableSplitHands = null, tableActiveHandIdx = 0;
   let tableInsuranceNetForRound = 0;
@@ -3489,20 +3534,80 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
   }
 
   // --- AI seat management ---
+  function makeSeatOrder(aiCount, userPosition){
+    const position = Math.max(0, Math.min(aiCount, userPosition));
+    const order = Array.from({length:aiCount}, (_,i)=>i);
+    order.splice(position, 0, 'user');
+    return order;
+  }
+  function refreshSeatOptions(){
+    const count = Number(document.getElementById('t-ai-count').value);
+    const select = document.getElementById('t-user-position');
+    const previous = Math.min(count, Number(select.value) || 0);
+    select.replaceChildren();
+    for(let i=0;i<=count;i++){
+      const description = i===0 ? 'rightmost, first to act' : i===count ? 'leftmost, last to act' : `turn ${i+1}`;
+      select.add(new Option(`Seat ${i+1} — ${description}`, String(i)));
+    }
+    select.value = String(previous);
+  }
+  function rebuildTableSeats(){
+    if(tableRoundActive) return;
+    buildAISeats(Number(document.getElementById('t-ai-count').value));
+    document.getElementById('t-user-row').replaceChildren();
+    document.getElementById('t-user-total').textContent = '';
+    document.getElementById('t-dealer-row').replaceChildren();
+    document.getElementById('t-round-summary').replaceChildren();
+    clearBanners(); clearTableStrategyGuide();
+  }
+  document.getElementById('t-ai-count').addEventListener('change', ()=>{ refreshSeatOptions(); rebuildTableSeats(); });
+  document.getElementById('t-user-position').addEventListener('change', rebuildTableSeats);
+  function markTableTurn(player){
+    document.querySelectorAll('#t-seats-row .seat').forEach(el=>el.classList.remove('seat-current'));
+    const element = player==='user' ? document.getElementById('t-user-seat') : aiSeatEls[player]?.seatEl;
+    if(element){
+      element.classList.add('seat-current');
+      const row = document.getElementById('t-seats-row');
+      // Move only the seat strip, leaving the page and action buttons in place.
+      row.scrollLeft += element.getBoundingClientRect().left + element.offsetWidth/2 - (row.getBoundingClientRect().left + row.clientWidth/2);
+    }
+  }
+  async function playTableAISeats(start, end, dealerUpVal, systemKey){
+    for(let turn=start;turn<end;turn++){
+      const index = tableSeatOrder[turn];
+      if(index==='user') continue;
+      markTableTurn(index);
+      await sleep(250);
+      const cards = tableRoundAIHands[index];
+      tableAIResultsForRound[index] = handValue(cards).total===21
+        ? [{cards, bet:1, busted:false, blackjack:true}]
+        : playHand(cards.slice(), dealerUpVal, RULES, tableShoeState, systemKey, true, rankGroup(cards[0].rank)===rankGroup(cards[1].rank), 'basic', tableGraveyard);
+      updateAISeatsFromResults(tableAIResultsForRound);
+      updateTableDeckVisual(); updateTableCountDisplay(); renderGraveyardManifest();
+    }
+  }
+
   function buildAISeats(aiCount){
     document.querySelectorAll('#t-seats-row .seat-ai').forEach(el=>el.remove());
     aiSeatEls = [];
     const seatsRow = document.getElementById('t-seats-row');
+    tableUserSeatIndex = Math.min(aiCount, Number(document.getElementById('t-user-position').value) || 0);
+    tableSeatOrder = makeSeatOrder(aiCount, tableUserSeatIndex);
+    const userSeat = document.getElementById('t-user-seat');
+    userSeat.style.order = tableUserSeatIndex;
+    userSeat.classList.remove('seat-current');
+    document.getElementById('t-user-seat-number').textContent = `· Seat ${tableUserSeatIndex+1}`;
+    seatsRow.style.setProperty('--seat-count', aiCount+1);
     for(let i=0;i<aiCount;i++){
       const seat = document.createElement('div');
       seat.className = 'seat seat-ai';
-      seat.style.order = i;
+      seat.style.order = tableSeatOrder.indexOf(i);
       const banner = document.createElement('div');
       banner.className = 'result-banner';
       seat.appendChild(banner);
       const label = document.createElement('div');
       label.className = 'seat-label';
-      label.textContent = `Player ${i+1}`;
+      label.textContent = `Player ${i+1} · Seat ${tableSeatOrder.indexOf(i)+1}`;
       seat.appendChild(label);
       const betSpot = document.createElement('div');
       betSpot.className = 'seat-bet-spot';
@@ -3516,6 +3621,8 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
       seatsRow.appendChild(seat);
       aiSeatEls.push({seatEl:seat, handRowEl:handRow, totalEl:totalLine, bannerEl:banner});
     }
+    tableSeatOrder.forEach(player=>seatsRow.appendChild(player==='user' ? userSeat : aiSeatEls[player].seatEl));
+    seatsRow.scrollLeft = 0;
   }
   function updateAISeatsFromResults(resultsList){
     resultsList.forEach((handsArr, idx)=>{
@@ -3611,6 +3718,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     const desktopBtn = document.getElementById('btn-table-deal');
     const mobileBtn = document.getElementById('btn-table-deal-mobile');
     const mobileBar = document.getElementById('t-mobile-deal-bar');
+    document.getElementById('table-panel').classList.toggle('round-idle', !tableRoundActive);
     mobileBtn.disabled = desktopBtn.disabled;
     mobileBar.classList.toggle('deal-ready', !tableRoundActive && !desktopBtn.disabled);
   }
@@ -3711,43 +3819,29 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     document.getElementById('t-dealer-row').innerHTML = '';
     document.getElementById('t-user-row').innerHTML = '';
 
-    const tableAIHands = [];
-    for(let i=0;i<aiCount;i++) tableAIHands.push([]);
+    tableRoundAIHands = Array.from({length:aiCount}, ()=>[]);
+    tableAIResultsForRound = [];
     tableUserCards = [];
     tableSplitHands = null;
     tableActiveHandIdx = 0;
 
-    // first card to each seat
-    for(let i=0;i<aiCount;i++){
-      const c = tableDrawVisible();
-      tableAIHands[i].push(c);
-      dealCardAnimated(aiSeatEls[i].handRowEl, c, true);
+    const dealToSeat = async player=>{
+      const card = tableDrawVisible();
+      if(player==='user'){
+        tableUserCards.push(card);
+        dealCardAnimated(document.getElementById('t-user-row'), card, true);
+      } else {
+        tableRoundAIHands[player].push(card);
+        dealCardAnimated(aiSeatEls[player].handRowEl, card, true);
+      }
       await sleep(150);
-    }
-    {
-      const c = tableDrawVisible();
-      tableUserCards.push(c);
-      dealCardAnimated(document.getElementById('t-user-row'), c, true);
-      await sleep(150);
-    }
+    };
+    for(const player of tableSeatOrder) await dealToSeat(player);
     const dealerUp = tableDrawVisible();
     tableDealerCards = [dealerUp];
     dealCardAnimated(document.getElementById('t-dealer-row'), dealerUp, true);
     await sleep(150);
-
-    // second card to each seat
-    for(let i=0;i<aiCount;i++){
-      const c = tableDrawVisible();
-      tableAIHands[i].push(c);
-      dealCardAnimated(aiSeatEls[i].handRowEl, c, true);
-      await sleep(150);
-    }
-    {
-      const c = tableDrawVisible();
-      tableUserCards.push(c);
-      dealCardAnimated(document.getElementById('t-user-row'), c, true);
-      await sleep(150);
-    }
+    for(const player of tableSeatOrder) await dealToSeat(player);
     const dealerHole = tableDrawHidden();
     tableDealerHoleCard = dealerHole;
     tableDealerHoleRevealed = false;
@@ -3784,7 +3878,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
       tableDealerHoleRevealed = true;
       tableRevealHidden(dealerHole);
       tableDealerCards.push(dealerHole);
-      tableAIResultsForRound = tableAIHands.map(cards => [{cards, bet:1, busted:false, blackjack: handValue(cards).total===21}]);
+      tableAIResultsForRound = tableRoundAIHands.map(cards => [{cards, bet:1, busted:false, blackjack: handValue(cards).total===21}]);
       renderTableDealerRow(true);
       updateAISeatsFromResults(tableAIResultsForRound);
       document.getElementById('t-feedback').className = 'feedback info';
@@ -3793,16 +3887,9 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
       return;
     }
 
-    await sleep(300);
-    tableAIResultsForRound = tableAIHands.map(cards=>{
-      if(handValue(cards).total === 21) return [{cards, bet:1, busted:false, blackjack:true}];
-      const canSplitAI = rankGroup(cards[0].rank) === rankGroup(cards[1].rank);
-      return playHand(cards.slice(), dealerUpVal, RULES, tableShoeState, systemKey, true, canSplitAI, 'basic', tableGraveyard);
-    });
+    tableAIResultsForRound = tableRoundAIHands.map(cards=>[{cards, bet:1, busted:false, blackjack:handValue(cards).total===21}]);
     updateAISeatsFromResults(tableAIResultsForRound);
-    updateTableDeckVisual();
-    updateTableCountDisplay();
-    renderGraveyardManifest();
+    await playTableAISeats(0, tableUserSeatIndex, dealerUpVal, systemKey);
 
     if(userBJ){
       document.getElementById('t-feedback').className = 'feedback correct';
@@ -3817,7 +3904,8 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     updateTableUserButtons();
     renderTableStrategyGuide(dealerUpVal);
     document.getElementById('t-feedback').className = 'feedback info';
-    document.getElementById('t-feedback').textContent = 'Your turn — choose an action.';
+    markTableTurn('user');
+    document.getElementById('t-feedback').textContent = `Your turn — seat ${tableUserSeatIndex+1}. Choose an action.`;
   }
 
   let tableActionBusy = false;
@@ -3997,6 +4085,9 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
   }
 
   async function finishRound(userResults, dealerUpVal, systemKey){
+    disableAllUserButtons();
+    if(!tableDealerBJAtStart) await playTableAISeats(tableUserSeatIndex+1, tableSeatOrder.length, dealerUpVal, systemKey);
+    document.querySelectorAll('#t-seats-row .seat').forEach(el=>el.classList.remove('seat-current'));
     if(!tableDealerHoleRevealed){
       tableDealerHoleRevealed = true;
       tableRevealHidden(tableDealerHoleCard);
@@ -4096,7 +4187,7 @@ input[type=range]{ accent-color: var(--gold); width:100%; }
     document.getElementById('t-dealer-row').innerHTML = '';
     document.getElementById('t-user-row').innerHTML = '';
     document.getElementById('t-user-total').textContent = '';
-    buildAISeats(0);
+    buildAISeats(Number(document.getElementById('t-ai-count').value));
     clearBanners();
     clearTableStrategyGuide();
   });

@@ -8,6 +8,10 @@ A browser blackjack trainer with basic strategy, counting drills, practice play,
 
 Use **Start training** for the basic strategy drill. The drill tests decisions; **Play** runs complete rounds. Progress is stored in this browser when browser storage is available. Use **Reset progress** to clear it. Keyboard shortcuts while the training panel has focus: H hit, S stand, D double, P split, R surrender, N next hand. Controls retain normal keyboard behavior when focused.
 
+## Player seating
+
+In **Settings → Play Table**, choose the number of AI players and **Your seat / turn order**. Seat 1 is the rightmost seat and acts first by default. Both cards and turns proceed right to left, with the dealer playing last. Choosing a middle or last seat makes the AI players before you finish before your turn; the remaining players wait until you finish. Seat changes are available between rounds. On phones, swipe the seat strip horizontally; action controls stay outside the strip.
+
 ## Validation
 
 Requires Node.js 20 or newer.
@@ -21,6 +25,6 @@ npm run test:browser
 
 For an existing Chromium installation, skip the browser download and run `CHROMIUM_PATH=/usr/bin/chromium npm run test:browser`.
 
-Strategy regression tests cover S17/H17 decisions, surrender eligibility, double fallbacks, no-DAS pairs, split-hand play, and Ace totals. Browser checks cover navigation, decisions, storage persistence, dealing locks, settlement, and mobile horizontal overflow. Browser screenshots are written to `/tmp/blackjack-desktop.png` and `/tmp/blackjack-mobile.png`.
+Strategy regression tests cover S17/H17 decisions, surrender eligibility, double fallbacks, no-DAS pairs, split-hand play, and Ace totals. Browser checks cover navigation, decisions, storage persistence, dealing locks, settlement, mobile horizontal overflow, first/middle/last seating, right-to-left dealing and play, correct counts, and seven-seat layouts. Browser screenshots are written to `/tmp/blackjack-desktop.png` and `/tmp/blackjack-mobile.png`.
 
 The simulator is a practice aid, not a guarantee of returns. Exhaustive strategy validation, adaptive drills for missed hands, and full counting-system betting calibration remain future work.
